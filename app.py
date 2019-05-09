@@ -26,6 +26,7 @@ def returnLines(data):
 
 @socketio.on('clearBoard')
 def clearBoard(data):
+    global currLines
     currLines = []
     # print(currLines)
     emit('clearBoard', None, broadcast = True, include_self = False)
