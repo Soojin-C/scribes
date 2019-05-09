@@ -1,4 +1,9 @@
 {% extends "base.html" %}
 {% block body %}
-hi
+Current Timer:
+<div id='timer'>
+  {{currTime}}
+</div>
+<canvas id='drawingCanvas' height="500" width="500" style='border: 1px solid black'></canvas><br>
+<button id='clearbtn' onclick='clearBoard()'>Clear Board</button>
 {% endblock %}
