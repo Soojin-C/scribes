@@ -10,14 +10,14 @@ var lineWidth = 3;
 
 ctx.lineCap = 'round';
 
-var drawLine = function(x0, y0, x1, y1, sendBack = true) {
-  ctx.lineWidth = lineWidth;
+var drawLine = function(x0, y0, x1, y1, sendBack = true, inputWidth = lineWidth) {
+  ctx.lineWidth = inputWidth;
   ctx.beginPath();
   ctx.moveTo(x0, y0); //Offset x and y by vector
   ctx.lineTo(x1, y1); //Draw line to center of the next circle
   ctx.stroke();
   if (sendBack) {
-    socket.emit('newLine', [x0, y0, x1, y1]);
+    socket.emit('newLine', [x0, y0, x1, y1, inputWidth]);
   }
 }
 
@@ -37,13 +37,13 @@ socket.on('connect', function() { //Executed upon opening the site
 socket.on('recieveLines', function(lines) {
   for (var i = 0; i < lines.length; i += 1) {
     currLine = lines[i];
-    drawLine(currLine[0], currLine[1], currLine[2], currLine[3], sendBack = false);
+    drawLine(currLine[0], currLine[1], currLine[2], currLine[3], sendBack = false, inputWidth = currLine[4]);
   }
 });
 
 socket.on('newLine', function(line) {
   // console.log(line);
-  drawLine(line[0], line[1], line[2], line[3], sendBack = false);
+  drawLine(line[0], line[1], line[2], line[3], sendBack = false, inputWidth = line[4]);
 });
 
 socket.on('clearBoard', function(data) {
@@ -76,4 +76,21 @@ canvas.addEventListener('mouseout', function(e) {
 
 canvas.addEventListener('mouseup', function(e) {
   isDrawing = false;
+});
+
+canvas.addEventListener("wheel", function(e) {
+  var change;
+  if (e.deltaY > 0) {
+    change = -1;
+  } else {
+    change = 1;
+  }
+  lineWidth += change;
+  //console.log(lineWidth);
+  if (lineWidth < 3) { //Clamp min brush size to 3 pixels
+    lineWidth = 3;
+  } else if (lineWidth > 20) { //Clamp max brush size to 20 pixels
+    lineWidth = 20;
+  }
+  e.preventDefault(); //Prevent user from scrolling down the page
 });
