@@ -4,6 +4,7 @@ Current Timer:
 <div id='timer'>
   {{currTime}}
 </div>
-<canvas id='drawingCanvas' height="500" width="500" style='border: 1px solid black'></canvas><br>
+<canvas id='cursor' height='21' width='21' style='position: absolute; pointer-events: none; transform: translate(-50%, -50%);'></canvas>
+<canvas id='drawingCanvas' height="500" width="500" style='border: 1px solid black; cursor: none;'></canvas><br>
 <button id='clearbtn' onclick='clearBoard()'>Clear Board</button>
 {% endblock %}

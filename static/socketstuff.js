@@ -3,6 +3,10 @@ var timer = document.getElementById('timer');
 var canvas = document.getElementById('drawingCanvas');
 var ctx = canvas.getContext('2d');
 var clearbtn = document.getElementById('clearbtn');
+var cursor = document.getElementById('cursor');
+var cursorCtx = cursor.getContext('2d');
+
+var cursorVisible = false;
 var isDrawing = false;
 var prevX = 0;
 var prevY = 0;
@@ -19,6 +23,13 @@ var drawLine = function(x0, y0, x1, y1, sendBack = true, inputWidth = lineWidth)
   if (sendBack) {
     socket.emit('newLine', [x0, y0, x1, y1, inputWidth]);
   }
+}
+
+var changeCursor = function() {
+  cursorCtx.clearRect(0,0,cursor.width, cursor.height);
+  cursorCtx.beginPath();
+  cursorCtx.arc(cursor.width / 2, cursor.height / 2, lineWidth / 2, 0, 2 * Math.PI);
+  cursorCtx.stroke();
 }
 
 var clearBoard = function(sendBack = true) {
@@ -62,6 +73,8 @@ canvas.addEventListener('mousedown', function(e) {
 });
 
 canvas.addEventListener('mousemove', function(e) {
+  cursor.style.left = e.clientX.toString() + 'px';
+  cursor.style.top = e.clientY.toString() + 'px';
   if (isDrawing) {
     //Draw the line
     drawLine(prevX, prevY, e.offsetX, e.offsetY);
@@ -70,7 +83,12 @@ canvas.addEventListener('mousemove', function(e) {
   }
 });
 
+canvas.addEventListener('mouseenter', function(e) {
+  cursor.style.display = 'inline';
+});
+
 canvas.addEventListener('mouseout', function(e) {
+  cursor.style.display = 'none';
   isDrawing = false;
 });
 
@@ -92,5 +110,8 @@ canvas.addEventListener("wheel", function(e) {
   } else if (lineWidth > 20) { //Clamp max brush size to 20 pixels
     lineWidth = 20;
   }
+  changeCursor();
   e.preventDefault(); //Prevent user from scrolling down the page
 });
+
+changeCursor();
