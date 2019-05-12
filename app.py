@@ -20,6 +20,10 @@ def setup():
 def root():
     return render_template("index.html", currTime = timerTime)
 
+@app.route("/game", methods=["GET", "POST"])
+def game():
+    return render_template("game.html")
+
 @socketio.on('requestLines')
 def returnLines(data):
     emit('recieveLines', currLines)
@@ -46,6 +50,13 @@ def countdown():
         if timerTime <= -1:
             timerTime = 60
         socketio.emit('updateTimer', timerTime)
+
+@socketio.on('message')
+def message(msg, methods=['GET','POST']):
+    print("Message " + msg)
+    if len(msg) != 0:
+        socketio.send(msg, broadcast=True)
+
 
 #@socketio.on("eventName")
 #def fxn(data):
