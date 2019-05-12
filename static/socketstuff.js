@@ -8,6 +8,9 @@ var prevX = 0;
 var prevY = 0;
 var lineWidth = 3;
 
+var msgbox = document.getElementById('chatlog');
+//var msgform = document.getElementById('chatform')
+
 ctx.lineCap = 'round';
 
 var drawLine = function(x0, y0, x1, y1, sendBack = true, inputWidth = lineWidth) {
@@ -93,4 +96,23 @@ canvas.addEventListener("wheel", function(e) {
     lineWidth = 20;
   }
   e.preventDefault(); //Prevent user from scrolling down the page
+});
+
+/*
+socket.on('chat', function(msg){
+  var msg = document.getElementById("message");
+  console.log(msg);
+  msgbox.append("<div>"+msg+"</div>")
+});
+
+msgform.addEventListener("submit", function(e){
+  e.preventDefault();
+  var msg = document.getElementById("message");
+  console.log(msg)
+});
+*/
+
+socket.on("message", function(msg){
+  msgbox.append("<li>"+ msg +"</li>");
+  console.log("recieved msg");
 });
