@@ -3,14 +3,14 @@ var timer = document.getElementById('timer');
 var canvas = document.getElementById('drawingCanvas');
 var ctx = canvas.getContext('2d');
 var clearbtn = document.getElementById('clearbtn');
-var cursor = document.getElementById('cursor');
-var cursorCtx = cursor.getContext('2d');
 
-var cursorVisible = false;
 var isDrawing = false;
 var prevX = 0;
 var prevY = 0;
 var lineWidth = 3;
+
+var cursorStyle = document.createElement('style');
+document.head.appendChild(cursorStyle);
 
 var msgbox = document.getElementById('chatlog');
 //var msgform = document.getElementById('chatform')
@@ -29,15 +29,13 @@ var drawLine = function(x0, y0, x1, y1, sendBack = true, inputWidth = lineWidth)
 }
 
 var changeCursor = function() {
-  cursorCtx.clearRect(0,0,cursor.width, cursor.height);
-  cursorCtx.strokeStyle = '#000000';
-  cursorCtx.beginPath();
-  cursorCtx.arc(cursor.width / 2, cursor.height / 2, lineWidth / 2 + 1, 0, 2 * Math.PI);
-  cursorCtx.stroke();
-  cursorCtx.strokeStyle = '#FFFFFF';
-  cursorCtx.beginPath();
-  cursorCtx.arc(cursor.width / 2, cursor.height / 2, lineWidth / 2, 0, 2 * Math.PI);
-  cursorCtx.stroke();
+  let newCursor = `cursor: url('data:image/svg+xml;utf8,\
+    <svg id="svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="32" height="32">\
+      <circle cx="12.5" cy="12.5" r="${lineWidth / 2 + 1}" fill-opacity="0" style="stroke: black;"/>\
+      <circle cx="12.5" cy="12.5" r="${lineWidth / 2}" fill-opacity="0" style="stroke: white;"/>\
+    </svg>')
+  12.5 12.5, pointer;`
+  cursorStyle.innerHTML = `#drawingCanvas { ${newCursor} }`;
 }
 
 var clearBoard = function(sendBack = true) {
@@ -81,8 +79,6 @@ canvas.addEventListener('mousedown', function(e) {
 });
 
 canvas.addEventListener('mousemove', function(e) {
-  cursor.style.left = e.clientX.toString() + 'px';
-  cursor.style.top = e.clientY.toString() + 'px';
   if (isDrawing) {
     //Draw the line
     drawLine(prevX, prevY, e.offsetX, e.offsetY);
@@ -91,12 +87,7 @@ canvas.addEventListener('mousemove', function(e) {
   }
 });
 
-canvas.addEventListener('mouseenter', function(e) {
-  cursor.style.display = 'inline';
-});
-
 canvas.addEventListener('mouseout', function(e) {
-  cursor.style.display = 'none';
   isDrawing = false;
 });
 
