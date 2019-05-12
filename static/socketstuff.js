@@ -30,6 +30,11 @@ var drawLine = function(x0, y0, x1, y1, sendBack = true, inputWidth = lineWidth)
 
 var changeCursor = function() {
   cursorCtx.clearRect(0,0,cursor.width, cursor.height);
+  cursorCtx.strokeStyle = '#000000';
+  cursorCtx.beginPath();
+  cursorCtx.arc(cursor.width / 2, cursor.height / 2, lineWidth / 2 + 1, 0, 2 * Math.PI);
+  cursorCtx.stroke();
+  cursorCtx.strokeStyle = '#FFFFFF';
   cursorCtx.beginPath();
   cursorCtx.arc(cursor.width / 2, cursor.height / 2, lineWidth / 2, 0, 2 * Math.PI);
   cursorCtx.stroke();
