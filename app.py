@@ -3,6 +3,8 @@ from flask import Flask, render_template, request
 import threading
 import os
 
+from util import word
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(32)
 socketio = SocketIO(app)
@@ -51,12 +53,19 @@ def countdown():
             timerTime = 60
         socketio.emit('updateTimer', timerTime)
 
+
 @socketio.on('message')
 def message(msg, methods=['GET','POST']):
-    print("Message " + msg)
+    #print("Message " + msg)
+    global currWord # TESTING
+    currWord = word.randword() # TESTING
     if len(msg) != 0:
-        socketio.send(msg, broadcast=True)
-
+        send(msg, broadcast=True)
+        guess = msg
+        print(guess == currWord)
+        if guess == currWord:
+            send("Correct")
+        
 
 #@socketio.on("eventName")
 #def fxn(data):

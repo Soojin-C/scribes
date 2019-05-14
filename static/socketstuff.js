@@ -12,7 +12,7 @@ var lineWidth = 3;
 var cursorStyle = document.createElement('style');
 document.head.appendChild(cursorStyle);
 
-var msgbox = document.getElementById('chatlog');
+var msgbox = document.getElementById('msg');
 //var msgform = document.getElementById('chatform')
 
 ctx.lineCap = 'round';
@@ -114,6 +114,7 @@ canvas.addEventListener("wheel", function(e) {
 });
 
 changeCursor();
+
 /*
 socket.on('chat', function(msg){
   var msg = document.getElementById("message");
@@ -125,10 +126,47 @@ msgform.addEventListener("submit", function(e){
   e.preventDefault();
   var msg = document.getElementById("message");
   console.log(msg)
+  send(msg)
 });
 */
-
+/*
 socket.on("message", function(msg){
+  var msg = document.getElementById("message")
   msgbox.append("<li>"+ msg +"</li>");
   console.log("recieved msg");
+
 });
+*/
+var sendMessage = function() {
+  console.log("Sending message");
+  var newMsg = msgbox.value;
+  socket.send(newMsg);
+  msgbox.value = "";
+}
+
+socket.on("message", function(msg){
+  var chatlog = document.getElementById('chatlog');
+  var newMsg = document.createElement('li');
+  var children = chatlog.children;
+  if (children.length > 10) {
+    chatlog.removeChild(children[0]);
+  }
+  newMsg.innerHTML = msg; 
+  chatlog.appendChild(newMsg)
+});
+
+msgbox.addEventListener("keydown", function(e){
+  if (e.keyCode == 13){
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+var sendbutton = document.getElementById("send");
+
+sendbutton.addEventListener("click", function(e){
+  e.preventDefault();
+  sendMessage();
+});
+
+

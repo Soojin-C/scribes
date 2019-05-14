@@ -1,17 +1,36 @@
 {% extends "base.html" %}
 {% block body %}
-Current Timer:
-<div id='timer'>
-  {{currTime}}
-</div>
-<canvas id='drawingCanvas' height="500" width="500" style='border: 1px solid black'></canvas><br>
-<button id='clearbtn' onclick='clearBoard()'>Clear Board</button>
-
+<div class="container">
+    <div class="row">
+    <div class="col-sm-8"
+    Current Timer:
+        <div id='timer'>
+        {{currTime}}
+        </div>
+    <canvas id='drawingCanvas' height="500" width="500" style='border: 1px solid black'></canvas><br>
+    <button id='clearbtn' onclick='clearBoard()'>Clear Board</button>
+    </div>
+<div class="col-sm-4">
+<div id="chat">
     <h4>Chatlog</h4>
-    <ul id="chatlog"></ul>
+     <ul style="list-style: none; padding-left: 0;" id="chatlog">
+        <li>&nbsp;</li>
+        <li>&nbsp;</li>
+        <li>&nbsp;</li>
+        <li>&nbsp;</li>
+        <li>&nbsp;</li>
+        <li>&nbsp;</li>
+        <li>&nbsp;</li>
+        <li>&nbsp;</li>
+        <li>&nbsp;</li>
+        <li>&nbsp;</li>
+        <li>&nbsp;</li>
+      </ul>
     <input type="text" id="msg"/>
-    <button id="send">Send</button>
-    <!--
+    <input type="submit" id="send"/>
+</div>
+</div>
+<!--
     <div id="chatlog">
     </div>
     <form action="" method="POST" id="chatform">
@@ -20,7 +39,8 @@ Current Timer:
     </form>
  -->
 
-
+</div>
+</div>
 {% endblock %}
 {% block footer %}
 <a role="button" class="btn btn-light" href="/">Back</button>
