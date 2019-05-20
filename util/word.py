@@ -1,7 +1,16 @@
 import random
 
-wordlist = ["apple", "cake"]
+words = open("static/wordlist.txt")
+wordlist = words.readlines()
+
+for word in wordlist:
+    word.lower()
+    word.strip()
+
+print(wordlist)
 
 def randword():
-    return random.choice(wordlist)
+    word = random.choice(wordlist)
+    print(word)
+    return word
     
