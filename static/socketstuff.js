@@ -3,6 +3,7 @@ var timer = document.getElementById('timer');
 var canvas = document.getElementById('drawingCanvas');
 var ctx = canvas.getContext('2d');
 var clearbtn = document.getElementById('clearbtn');
+var isCurrDrawer = false;
 
 var isDrawing = false;
 var prevX = 0;
@@ -51,6 +52,14 @@ socket.on('connect', function() { //Executed upon opening the site
   socket.emit('requestLines', null);
 });
 
+socket.on('yourturn', function(data) {
+  isCurrDrawer = true;
+});
+
+socket.on('notyourturn', function(data) {
+  isCurrDrawer = false;
+});
+
 socket.on('recieveLines', function(lines) {
   for (var i = 0; i < lines.length; i += 1) {
     currLine = lines[i];
@@ -72,14 +81,16 @@ socket.on('updateTimer', function(newTime) {
 });
 
 canvas.addEventListener('mousedown', function(e) {
-  prevX = e.offsetX;
-  prevY = e.offsetY;
-  isDrawing = true;
-  drawLine(prevX, prevY, prevX, prevY);
+  if (isCurrDrawer) {
+    prevX = e.offsetX;
+    prevY = e.offsetY;
+    isDrawing = true;
+    drawLine(prevX, prevY, prevX, prevY);
+  }
 });
 
 canvas.addEventListener('mousemove', function(e) {
-  if (isDrawing) {
+  if (isCurrDrawer && isDrawing) {
     //Draw the line
     drawLine(prevX, prevY, e.offsetX, e.offsetY);
     prevX = e.offsetX;
@@ -151,7 +162,7 @@ socket.on("message", function(msg){
   if (children.length > 10) {
     chatlog.removeChild(children[0]);
   }
-  newMsg.innerHTML = msg; 
+  newMsg.innerHTML = msg;
   chatlog.appendChild(newMsg)
 });
 
@@ -168,5 +179,3 @@ sendbutton.addEventListener("click", function(e){
   e.preventDefault();
   sendMessage();
 });
-
-

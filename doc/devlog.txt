@@ -38,7 +38,7 @@ soojinC -- 2019-05-10 22:00
 --------------------------------------------------------------
 - design doc revision based on design doc review:
   - Edited the components list to make it clearer
-  - Edited the component map to make arrow connections more 
+  - Edited the component map to make arrow connections more
   	accurate
 ==============================================================
 kevinL -- 2019-05-11 18:43
@@ -84,5 +84,9 @@ soojinC -- 2019-05-20 13:24
 --------------------------------------------------------------
 - design doc changes:
   - Added additional features (oauth)
-  - Reworked component map 
+  - Reworked component map
+==============================================================
+kevinL -- 2019-05-20 17:48
+--------------------------------------------------------------
+- Draw lock implemented
 ==============================================================

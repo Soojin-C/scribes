@@ -3,8 +3,9 @@ import random
 def newGame(firstPlayer, maxTime = 60, maxRounds = 3): #Creates a new game
     output = {}
     output['players'] = set() #request.sid
+    output['players'].add(firstPlayer)
     output['correctPlayers'] = set() #Set of players who have correctly guessed the word
-    output['order'] = [] #Player order
+    output['order'] = [firstPlayer] #Player order
     output['currDrawer'] = 0 #Index for order
     output['wordPool'] = set() #Word pool
     output['offeredWords'] = ['','',''] #Ask player to choose: apple, pear, banana
@@ -29,7 +30,7 @@ def removeUser(game,user):
     game['players'].remove(user)
     if game['order'][game['currDrawer']] == user:
         nextUser(game, keepIndex = True)
-    elif game['currDrawer'] > lst.index(user):
+    elif game['currDrawer'] > game['order'].index(user):
         game['currDrawer'] -= 1
     game['order'].remove(user)
     del game['points'][user]

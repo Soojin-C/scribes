@@ -40,9 +40,19 @@ def joinRoom(roomID):
     join_room(roomID) #Places user in a room
     if roomID not in games: #Create new game
         games[roomID] = Game.newGame(request.sid)
-    Game.addUser(games[roomID],request.sid)
+        emit('yourturn')
+    else:
+        Game.addUser(games[roomID],request.sid)
     rooms[request.sid] = roomID #Sets room of user in a dictionary for later use
     emit('joinRoom', roomID)
+
+@socketio.on('disconnect')
+def disconn(): #Executed when a client disconnects from the server
+    if request.sid in rooms:
+        Game.removeUser(games[rooms[request.sid]], request.sid)
+        if len(games[rooms[request.sid]]['players']) == 0: #Deletes game room if no-one is in it
+            games.pop(rooms[request.sid])
+        rooms.pop(request.sid)
 
 @socketio.on('requestLines')
 def returnLines(data):
@@ -56,6 +66,10 @@ def clearBoard(data):
 
 @socketio.on('newLine')
 def newLine(line):
+    currGame = games[rooms[request.sid]]
+    # print(currGame['order'], currGame['currDrawer'])
+    if (request.sid != currGame['order'][currGame['currDrawer']]):
+        return
     games[rooms[request.sid]]['currLines'].append(line);
     # print(line);
     emit('newLine', line, broadcast = True, include_self = False, room = rooms[request.sid])
