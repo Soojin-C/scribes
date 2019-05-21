@@ -50,3 +50,26 @@ def nextUser(game, keepIndex = False):
             return 'Game End'
         game['currDrawer'] = 0
     game['offeredWords'] = random.sample(game['wordPool'], 3)
+
+def fillWordPool(game):
+    words = open("static/wordlist.txt")
+    wordlist = words.readlines()
+    for word in wordlist:
+        word.lower()
+        word.strip()
+    game['wordPool'] = wordlist
+
+def randword(game):
+    word = random.choice(game['wordPool'])
+    return word    
+
+def getcurrDrawer(game):
+    return game['currDrawer']
+
+currgame = newGame("playerid0")
+fillWordPool(currgame)
+print(randword(currgame))
+addUser(currgame, "user0")
+print(getcurrDrawer(currgame))
+nextUser(currgame)
+print(getcurrDrawer(currgame))
