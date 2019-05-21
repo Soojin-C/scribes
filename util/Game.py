@@ -1,14 +1,17 @@
 import random
 
-def newGame(firstPlayer, maxTime = 60, maxRounds = 3): #Creates a new game
+defaultWords = set(x.lower() for x in open("static/wordlist.txt",'r').read().split())
+# print(defaultWords)
+
+def newGame(firstPlayer, maxTime = 10, maxRounds = 3, wordPool = defaultWords): #Creates a new game
     output = {}
     output['players'] = set() #request.sid
     output['players'].add(firstPlayer)
     output['correctPlayers'] = set() #Set of players who have correctly guessed the word
     output['order'] = [firstPlayer] #Player order
     output['currDrawer'] = 0 #Index for order
-    output['wordPool'] = set() #Word pool
-    output['offeredWords'] = ['','',''] #Ask player to choose: apple, pear, banana
+    output['wordPool'] = wordPool #Word pool
+    output['offeredWords'] = random.sample(wordPool,3)#['','',''] #Ask player to choose: apple, pear, banana
     output['currWord'] = '' #apple
     output['wordDisplay'] = '' #__p__
     output['points'] = {} #Dictionary request.sid : score
@@ -21,6 +24,7 @@ def newGame(firstPlayer, maxTime = 60, maxRounds = 3): #Creates a new game
 
 def addUser(game,user): #Adds user to a game
     game['players'].add(user)
+    game['points'][user] = 0
     insertPos = int(random.random() * len(game['order']))
     if insertPos <= game['currDrawer']:
         game['currDrawer'] += 1
@@ -50,24 +54,22 @@ def nextUser(game, keepIndex = False):
             return 'Game End'
         game['currDrawer'] = 0
     game['offeredWords'] = random.sample(game['wordPool'], 3)
+    print(game['offeredWords'])
 
 def fillWordPool(game):
-    words = open("static/wordlist.txt")
-    wordlist = words.readlines()
-    for word in wordlist:
-        word.lower()
-        word.strip()
-    game['wordPool'] = wordlist
+    words = open("static/wordlist.txt",'r').read().split()
+    game['wordPool'] = set(x.lower() for x in words)
 
 def randword(game):
-    word = random.choice(game['wordPool'])
-    return word    
+    word = random.sample(game['wordPool'],1)
+    return word
 
 def getcurrDrawer(game):
     return game['currDrawer']
 
 currgame = newGame("playerid0")
-fillWordPool(currgame)
+#fillWordPool(currgame)
+print(currgame)
 print(randword(currgame))
 addUser(currgame, "user0")
 print(getcurrDrawer(currgame))

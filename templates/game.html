@@ -2,13 +2,13 @@
 {% block body %}
 <div class="container">
     <div class="row">
-    <div class="col-sm-8"
-    Current Timer:
+      <div class="col-sm-8">
+        Current Timer:
         <div id='timer'>
-        {{currTime}}
+          {{currTime}}
         </div>
-    <canvas id='drawingCanvas' height="500" width="500" style='border: 1px solid black'></canvas><br>
-    <button id='clearbtn' onclick='clearBoard()'>Clear Board</button>
+      <canvas id='drawingCanvas' height="500" width="1000" style='border: 1px solid black'></canvas><br>
+      <button id='clearbtn' onclick='clearBoard()'>Clear Board</button>
     </div>
 <div class="col-sm-4">
 <div id="chat">

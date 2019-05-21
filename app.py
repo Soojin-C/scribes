@@ -83,6 +83,9 @@ def countdown():
             games[roomID]['timerTime'] -= 1
             if games[roomID]['timerTime'] <= -1:
                 games[roomID]['timerTime'] = games[roomID]['maxTime']
+                socketio.emit('notyourturn', room = games[roomID]['order'][games[roomID]['currDrawer']])
+                Game.nextUser(games[roomID])
+                socketio.emit('yourturn', room = games[roomID]['order'][games[roomID]['currDrawer']])
             # print(games[roomID]['timerTime'])
             socketio.emit('updateTimer', games[roomID]['timerTime'], room = roomID)
 
