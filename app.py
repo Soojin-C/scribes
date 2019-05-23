@@ -94,13 +94,13 @@ def countdown():
 def message(msg, methods=['GET','POST']):
     #print("Message " + msg)
     global currWord # TESTING
-    currWord = word.randword() # TESTING
+    #currWord = word.randword() # TESTING
     if len(msg) != 0:
         send(msg, broadcast=True)
         guess = msg
-        print(guess == currWord)
-        if guess == currWord:
-            send("Correct")
+        #print(guess == currWord)
+        #if guess == currWord:
+        #    send("Correct")
 
 
 #@socketio.on("eventName")
