@@ -48,6 +48,7 @@ def joinRoom(roomID):
 
 @socketio.on('disconnect')
 def disconn(): #Executed when a client disconnects from the server
+    print(request.sid + "Left")
     if request.sid in rooms:
         Game.removeUser(games[rooms[request.sid]], request.sid)
         if len(games[rooms[request.sid]]['players']) == 0: #Deletes game room if no-one is in it
@@ -80,14 +81,16 @@ def countdown():
         threading.Timer(1, countdown).start()
         #Execute the following tasks every second
         for roomID in games:
-            games[roomID]['timerTime'] -= 1
-            if games[roomID]['timerTime'] <= -1:
-                games[roomID]['timerTime'] = games[roomID]['maxTime']
-                socketio.emit('notyourturn', room = games[roomID]['order'][games[roomID]['currDrawer']])
-                Game.nextUser(games[roomID])
-                socketio.emit('yourturn', room = games[roomID]['order'][games[roomID]['currDrawer']])
+            currGame = games[roomID]
+            print(currGame['order'], currGame['currDrawer'], currGame['players'])
+            currGame['timerTime'] -= 1
+            if currGame['timerTime'] <= -1:
+                currGame['timerTime'] = currGame['maxTime']
+                socketio.emit('notyourturn', room = currGame['order'][currGame['currDrawer']])
+                Game.nextUser(currGame)
+                socketio.emit('yourturn', room = currGame['order'][currGame['currDrawer']])
             # print(games[roomID]['timerTime'])
-            socketio.emit('updateTimer', games[roomID]['timerTime'], room = roomID)
+            socketio.emit('updateTimer', currGame['timerTime'], room = roomID)
 
 
 @socketio.on('message')

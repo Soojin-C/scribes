@@ -14,7 +14,7 @@ def newGame(firstPlayer, maxTime = 10, maxRounds = 3, wordPool = defaultWords): 
     output['offeredWords'] = random.sample(wordPool,3)#['','',''] #Ask player to choose: apple, pear, banana
     output['currWord'] = '' #apple
     output['wordDisplay'] = '' #__p__
-    output['points'] = {} #Dictionary request.sid : score
+    output['points'] = {firstPlayer : 0} #Dictionary request.sid : score
     output['maxTime'] = maxTime
     output['timerTime'] = maxTime #Current timer
     output['maxRounds'] = maxRounds
@@ -50,9 +50,9 @@ def nextUser(game, keepIndex = False):
         game['currDrawer'] += 1
     if game['currDrawer'] >= len(game['players']): #Increments round or ends game if all players have gone
         game['round'] += 1
+        game['currDrawer'] = 0
         if game['round'] > game['maxRounds']:
             return 'Game End'
-        game['currDrawer'] = 0
     game['offeredWords'] = random.sample(game['wordPool'], 3)
     print(game['offeredWords'])
 
