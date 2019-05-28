@@ -16,16 +16,123 @@ document.head.appendChild(cursorStyle);
 var msgbox = document.getElementById('msg');
 //var msgform = document.getElementById('chatform')
 
+//================= color wheel ==================
+var color = [0, 0, 0]
+var oldcolor=[0,0,0]
+
+var distance = function(x0,y0,x1,y1){
+  var dx = Math.pow(Math.abs(x0 - x1), 2)
+  var dy = Math.pow(Math.abs(y0 - y1), 2)
+  return Math.pow(dx + dy, 0.5)
+}
+
+var hsv_to_rbg = function(h, s, v){
+  if (h >= 360 || s * v == 0 || s > 1 || v > 1){
+    return [0, 0, 0]
+  }
+  var c = v * s
+  var x = c * (1 - Math.abs((h/60) % 2 - 1))
+  var m = v - c
+  var rbg = [0,0,0]
+  if (h < 60){
+    rbg = [c,x,0]
+  }
+  else if (h < 120) {
+    rbg = [x,c,0]
+  }
+  else if (h < 180) {
+    rbg = [0,c,x]
+  }
+  else if (h < 240) {
+    rbg = [0,x,c]
+  }
+  else if (h < 300) {
+    rbg = [x,0,c]
+  }
+  else {
+    rbg = [c,0,x]
+  }
+  for (var u = 0; u < 3; u++){
+    var new_val = (rbg[u] + m) * 255
+    if (new_val % 1 < 0.5){
+      rbg[u] = Math.floor(new_val)
+    }
+    else{
+      rbg[u] = Math.ceil(new_val)
+    }
+  }
+  return rbg
+}
+//var colorData = []
+
+var center = [75,75]
+var max_rad = 70
+//var clrWheel = document.getElementById("clrWheel")
+var clrWheel = d3.select("body")
+                 .append("svg")
+                 .attr("width", 150)
+                 .attr("height", 150)
+var colorWheel = function(){
+  for (var i = 0; i < 150; i++){
+    //var temp = []
+    for (var j = 0; j < 150; j++){
+      var dist = distance(i, j, center[0], center[1])
+      if (dist <= max_rad){
+        var theta = Math.atan2(i - max_rad,j - max_rad) * ( 180.0 / Math.PI)
+        if (theta < 0){
+          theta = 360 + theta
+        }
+        //console.log("theta")
+        //console.log(theta)
+        var hsvChanged = hsv_to_rbg(theta , dist / max_rad, 1)
+        ///*
+        clrWheel.append("rect")
+                .attr("x", j)
+                .attr("y", i)
+                .attr("height", 1)
+                .attr("width", 1)
+                .attr("fill", rgb(hsvChanged))
+                .on("click",function(){
+                  //console.log(hsvChanged)
+                  newC = this.getAttribute("fill")
+                  console.log(newC)
+                  color = newC
+                })
+        //*/
+        //temp.append(rgb(hsvChanged))
+      }
+    }
+    //colorData.append(temp)
+  }
+}
+
+function rgb(color){
+    //console.log(color)
+    temp="#"
+    for (var i=0; i<color.length;i++){
+var hex = color[i].toString(16);
+hex.length == 1 ? "0" + hex : hex;
+temp+=hex
+    }
+    return temp
+}
+
+
+colorWheel()
+//console.log(colorData)
+//================================================
+
 ctx.lineCap = 'round';
 
-var drawLine = function(x0, y0, x1, y1, sendBack = true, inputWidth = lineWidth) {
+var drawLine = function(x0, y0, x1, y1, lineColor, sendBack = true, inputWidth = lineWidth) {
   ctx.lineWidth = inputWidth;
   ctx.beginPath();
   ctx.moveTo(x0, y0); //Offset x and y by vector
   ctx.lineTo(x1, y1); //Draw line to center of the next circle
+  ctx.strokeStyle = lineColor
   ctx.stroke();
   if (sendBack) {
-    socket.emit('newLine', [x0, y0, x1, y1, inputWidth]);
+    socket.emit('newLine', [x0, y0, x1, y1, inputWidth, color]);
   }
 }
 
@@ -63,13 +170,13 @@ socket.on('notyourturn', function(data) {
 socket.on('recieveLines', function(lines) {
   for (var i = 0; i < lines.length; i += 1) {
     currLine = lines[i];
-    drawLine(currLine[0], currLine[1], currLine[2], currLine[3], sendBack = false, inputWidth = currLine[4]);
+    drawLine(currLine[0], currLine[1], currLine[2], currLine[3], currLine[5], sendBack = false, inputWidth = currLine[4]);
   }
 });
 
 socket.on('newLine', function(line) {
   // console.log(line);
-  drawLine(line[0], line[1], line[2], line[3], sendBack = false, inputWidth = line[4]);
+  drawLine(line[0], line[1], line[2], line[3], line[5], sendBack = false, inputWidth = line[4]);
 });
 
 socket.on('clearBoard', function(data) {
@@ -92,7 +199,7 @@ canvas.addEventListener('mousedown', function(e) {
 canvas.addEventListener('mousemove', function(e) {
   if (isCurrDrawer && isDrawing) {
     //Draw the line
-    drawLine(prevX, prevY, e.offsetX, e.offsetY);
+    drawLine(prevX, prevY, e.offsetX, e.offsetY, color);
     prevX = e.offsetX;
     prevY = e.offsetY;
   }
