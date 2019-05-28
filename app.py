@@ -23,6 +23,10 @@ def setup():
 def root():
     return render_template("index.html", currTime = timerTime)
 
+@app.route("/login")
+def login():
+    return render_template("login.html")
+    
 @app.route("/game", methods=["GET", "POST"])
 def game():
     return render_template("game.html")
