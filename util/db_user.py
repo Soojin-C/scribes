@@ -3,7 +3,7 @@ import sqlite3
 #makes users and friends table
 def build():
     DB_FILE="data/login.db"
-    db=sqlite3.connect(DB_FILE)
+    db=sqlite3.connect("../" + DB_FILE)
     c=db.cursor()
     command="CREATE TABLE IF NOT EXISTS users(username TEXT, password TEXT)"
     c.execute(command)
