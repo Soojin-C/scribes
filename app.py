@@ -18,7 +18,10 @@ games = {} #roomID : game info dictionary
 
 @app.before_first_request #Executed upon startup
 def setup():
-    #dbu.build()
+    try:
+        dbu.build()
+    except:
+        countdown()
     countdown() #Start countdown timer
 
 @app.route("/")
@@ -38,13 +41,16 @@ def regis():
     if len(request.form['pass'])>0 and len(request.form['user'])>0:
         if request.form['pass']==request.form['pass2']:
             return render_template("index.html")
-#@app.route("/auth", methods=['GET','POST'])
-#def auth():
-    #try:
-    #    username=request.form['user']
-    #    password=dbu.spass(username)
-    #    if password==request.form['pass']
-    #return render_template("index.html", currTime = timerTime)
+@app.route("/auth", methods=['GET','POST'])
+def auth():
+    try:
+        username=request.form['user']
+        password=dbu.spass(username)
+        if password==request.form['pass']:
+            return render_template("index.html", currTime = timerTime)            
+    except:
+        return render_template("index.html", currTime = timerTime)
+    return render_template("index.html", currTime = timerTime)
     
 @app.route("/game", methods=["GET", "POST"])
 def game():
