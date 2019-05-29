@@ -1,5 +1,6 @@
 from flask_socketio import SocketIO, join_room, leave_room, emit, send
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, url_for
+from util import db_user.py as dbu
 import threading
 import os
 
@@ -17,6 +18,7 @@ games = {} #roomID : game info dictionary
 
 @app.before_first_request #Executed upon startup
 def setup():
+    dbu.build()
     countdown() #Start countdown timer
 
 @app.route("/")
@@ -26,6 +28,23 @@ def root():
 @app.route("/login")
 def login():
     return render_template("login.html")
+
+@app.route("/reg")
+def reg():
+    return render_template("register.html")
+
+@app.route("/register", methods=['GET','POST'])
+def regis():
+    if len(request.form['pass'])>0 and len(request.form['user'])>0:
+        if request.form['pass']==request.form['pass2']:
+            return render_template("index.html")
+@app.route("/auth", methods=['GET','POST'])
+def auth():
+    try:
+        username=request.form['user']
+        password=spass(username)
+        if password==request.form['pass']
+    return render_template("index.html", currTime = timerTime)
     
 @app.route("/game", methods=["GET", "POST"])
 def game():
