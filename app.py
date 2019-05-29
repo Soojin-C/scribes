@@ -103,7 +103,8 @@ def countdown():
     if continueTimer:
         threading.Timer(1, countdown).start()
         #Execute the following tasks every second
-        for roomID in games:
+        gamesCopy = list(games)
+        for roomID in gamesCopy:
             currGame = games[roomID]
             print(currGame['order'], currGame['currDrawer'], currGame['players'])
             currGame['timerTime'] -= 1
