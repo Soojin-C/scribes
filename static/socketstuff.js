@@ -3,12 +3,20 @@ var timer = document.getElementById('timer');
 var canvas = document.getElementById('drawingCanvas');
 var ctx = canvas.getContext('2d');
 var clearbtn = document.getElementById('clearbtn');
+var paintbtn = document.getElementById('paint');
+var penbtn = document.getElementById('pen');
 var isCurrDrawer = false;
+var fillTolerance = 25;
 
 var isDrawing = false;
+var drawMode = 'pen';
 var prevX = 0;
 var prevY = 0;
 var lineWidth = 3;
+
+// Set canvas background to opaque white
+ctx.fillStyle = 'rgba(255,255,255,1)';
+ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 var cursorStyle = document.createElement('style');
 document.head.appendChild(cursorStyle);
@@ -17,8 +25,8 @@ var msgbox = document.getElementById('msg');
 //var msgform = document.getElementById('chatform')
 
 //================= color wheel ==================
-var color = [0, 0, 0]
-var oldcolor=[0,0,0]
+var color = 'rgba(0,0,0,1)';
+var oldcolor = 'rgba(0,0,0,1)';
 
 var distance = function(x0,y0,x1,y1){
   var dx = Math.pow(Math.abs(x0 - x1), 2)
@@ -92,9 +100,10 @@ var colorWheel = function(){
                 .attr("height", 1)
                 .attr("width", 1)
                 .attr("fill", rgb(hsvChanged))
+                .attr("rgbval", 'rgba(' + hsvChanged.join() + ',1)')
                 .on("click",function(){
                   //console.log(hsvChanged)
-                  newC = this.getAttribute("fill")
+                  newC = this.getAttribute("rgbval")
                   console.log(newC)
                   color = newC
                 })
@@ -110,9 +119,9 @@ function rgb(color){
     //console.log(color)
     temp="#"
     for (var i=0; i<color.length;i++){
-var hex = color[i].toString(16);
-hex.length == 1 ? "0" + hex : hex;
-temp+=hex
+      var hex = color[i].toString(16);
+      hex.length == 1 ? "0" + hex : hex;
+      temp+=hex
     }
     return temp
 }
@@ -123,6 +132,97 @@ colorWheel()
 //================================================
 
 ctx.lineCap = 'round';
+
+var equalColor = function(startColor, lookupPos, imgData) {
+  //Get RGB values of the current pixel
+  var dr = (imgData.data[lookupPos] - startColor[0]) ** 2;
+  var dg = (imgData.data[lookupPos + 1] - startColor[1]) ** 2;
+  var db = (imgData.data[lookupPos + 2] - startColor[2]) ** 2;
+  //Compare to the starting pixel and return the result
+  return (dr + dg + db < fillTolerance);
+}
+
+var setColor = function(pixelPos, color, imgData) {
+  imgData.data[pixelPos] = color[0];
+  imgData.data[pixelPos + 1] = color[1];
+  imgData.data[pixelPos + 2] = color[2];
+  // imgData.data[pixelPos + 3] = 255;
+}
+
+var fill = function(x, y, fillColor, sendBack = true) {
+  // var printCount = 100;
+  // console.log('fillColor:');
+  console.log(fillColor);
+  var pixelStack = [[x,y]];
+  var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  var currPos = (x + (y * canvas.width)) * 4;
+  var startColor = imgData.data.slice(currPos, currPos + 3);
+  // console.log('startColor:');
+  // console.log('rgba(' + startColor.join() + ',1)');
+  ctx.fillStyle = fillColor;
+  fillColor = fillColor.substring(5, fillColor.length - 3).split(',');
+  for (var index = 0; index++; index < 3) {
+    // console.log(fillColor);
+    fillColor[index] = parseInt(fillColor[index]);
+  }
+  if ( equalColor(fillColor, currPos, imgData) ) { //Exit if filling an area of the same color
+    console.log('same');
+    return;
+  }
+
+  while (pixelStack.length != 0) {
+    var currPixel = pixelStack.pop();
+    x = currPixel[0];
+    y = currPixel[1];
+    currPos = (x + (y * canvas.width)) * 4;
+
+    //Go up until a non matching color is reached
+    while (y >= 0 && equalColor(startColor, currPos, imgData)) {
+      y -= 1;
+      currPos -= canvas.width * 4;
+    }
+    //Correct shooting over by one pixel
+    y += 1;
+    currPos += canvas.width * 4;
+
+    //Start going down
+    while (y < canvas.height && equalColor(startColor, currPos, imgData)) {
+      setColor(currPos, fillColor, imgData);
+      leftChange = true;
+      rightChange = true;
+
+      //Check on left pixel
+      if (x > 0 && leftChange && equalColor(startColor, currPos - 4, imgData)) {
+        pixelStack.push([x - 1, y]);
+        leftChange = false;
+      } else {
+        leftChange = true;
+      }
+      //Check on right pixel
+      if (x < canvas.width - 1 && rightChange && equalColor(startColor, currPos + 4, imgData)) {
+        pixelStack.push([x + 1, y]);
+        // if (printCount > 0) {
+        //   console.log([x + 1, y]);
+        //   printCount -= 1;
+        // }
+        rightChange = false;
+      } else {
+        rightChange = true;
+      }
+
+      //Move down
+      y += 1;
+      currPos += canvas.width * 4;
+    }
+  }
+  //Update image data
+  ctx.putImageData(imgData, 0, 0);
+
+  if (sendBack) {
+    console.log('Send paint attempted');
+    // socket.emit('newLine', [x, y, fillColor]);
+  }
+}
 
 var drawLine = function(x0, y0, x1, y1, lineColor, sendBack = true, inputWidth = lineWidth) {
   ctx.lineWidth = inputWidth;
@@ -147,7 +247,8 @@ var changeCursor = function() {
 }
 
 var clearBoard = function(sendBack = true) {
-  ctx.clearRect(0,0,canvas.width,canvas.height); //Clears the entire canvas
+  ctx.fillStyle = 'rgba(255,255,255,1)';
+  ctx.fillRect(0,0,canvas.width,canvas.height); //Clears the entire canvas
   if (sendBack) {
     socket.emit('clearBoard', null);
   }
@@ -189,15 +290,19 @@ socket.on('updateTimer', function(newTime) {
 
 canvas.addEventListener('mousedown', function(e) {
   if (isCurrDrawer) {
-    prevX = e.offsetX;
-    prevY = e.offsetY;
-    isDrawing = true;
-    drawLine(prevX, prevY, prevX, prevY);
+    if (drawMode == 'pen') {
+      prevX = e.offsetX;
+      prevY = e.offsetY;
+      isDrawing = true;
+      drawLine(prevX, prevY, prevX, prevY, color);
+    } else if (drawMode == 'fill') {
+      fill(e.offsetX, e.offsetY, color);
+    }
   }
 });
 
 canvas.addEventListener('mousemove', function(e) {
-  if (isCurrDrawer && isDrawing) {
+  if (isCurrDrawer && isDrawing && drawMode == 'pen') {
     //Draw the line
     drawLine(prevX, prevY, e.offsetX, e.offsetY, color);
     prevX = e.offsetX;
