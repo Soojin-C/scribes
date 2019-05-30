@@ -4,7 +4,6 @@ from util import db_user as dbu
 import threading
 import os
 
-from util import word
 from util import Game
 
 app = Flask(__name__)
@@ -47,7 +46,8 @@ def auth():
         username=request.form['user']
         password=dbu.spass(username)
         if password==request.form['pass']:
-            return render_template("index.html", currTime = timerTime)            
+            friends = dbu.sfriend(username)
+            return render_template("userprofile.html", currTime = timerTime, username = username, friendlist = friends)            
     except:
         return render_template("index.html", currTime = timerTime)
     return render_template("index.html", currTime = timerTime)

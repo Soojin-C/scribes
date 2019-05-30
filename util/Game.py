@@ -67,6 +67,8 @@ def randword(game):
 def getcurrDrawer(game):
     return game['currDrawer']
 
+
+
 currgame = newGame("playerid0")
 #fillWordPool(currgame)
 print(currgame)

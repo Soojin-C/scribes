@@ -1,8 +1,6 @@
-<!DOCTYPE html>
-<html>
-  <head>
-  </head>
-  <body><center>
+{% extends "base.html" %}
+{% block body %}
+<center>
     <form method="POST" action="/register">
       Username:
       <input type="text" name="user" placeholder="Input username"><br>
@@ -12,5 +10,5 @@
       <input type="text" name="pass2" placeholder="Re-enter password"><br>
       <input type="submit" value="Register">
     </form></center>
-  </body>
-</html>
+
+{% endblock %}
