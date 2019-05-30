@@ -8,7 +8,7 @@ from util import Game
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(32)
-socketio = SocketIO(app)
+socketio = SocketIO(app, allow_upgrades = False)
 
 continueTimer = True
 timerTime = 60 #Timer to be displayed
@@ -47,11 +47,11 @@ def auth():
         password=dbu.spass(username)
         if password==request.form['pass']:
             friends = dbu.sfriend(username)
-            return render_template("userprofile.html", currTime = timerTime, username = username, friendlist = friends)            
+            return render_template("userprofile.html", currTime = timerTime, username = username, friendlist = friends)
     except:
         return render_template("index.html", currTime = timerTime)
     return render_template("index.html", currTime = timerTime)
-    
+
 @app.route("/game", methods=["GET", "POST"])
 def game():
     return render_template("game.html")
