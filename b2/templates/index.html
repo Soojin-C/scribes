@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block body %}
+Current Timer:
+<div id='timer'>
+  {{currTime}}
+</div>
+<!--
+<canvas id='drawingCanvas' height="500" width="500" style='border: 1px solid black;'></canvas><br>
+<button id='clearbtn' onclick='clearBoard()'>Clear Board</button> -->
+<a role="button" class="btn btn-light" href="/login">Login</a>
+<a role="button" class="btn btn-light" href="/reg">Register</a>
+<a role="button" class="btn btn-light" href="/game">Play</a>
+
+{% endblock %}
