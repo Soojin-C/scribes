@@ -1,5 +1,5 @@
 from flask_socketio import SocketIO, join_room, leave_room, emit, send
-from flask import Flask, render_template, request, session, url_for
+from flask import Flask, render_template, request, session, url_for, redirect
 from util import db_user as dbu
 import threading
 import os
@@ -35,22 +35,33 @@ def login():
 def reg():
     return render_template("register.html")
 
-@app.route("/register", methods=['GET','POST'])
+
+@app.route("/register", methods=["POST","GET"])
 def regis():
-    if len(request.form['pass'])>0 and len(request.form['user'])>0:
-        if request.form['pass']==request.form['pass2']:
-            return render_template("index.html")
+    if request.method=="POST":
+        user=request.form['user']
+        pass1=request.form['pass']
+        pass2=request.form['pass2']
+        if len(pass1)>0 and len(user)>0:
+            if pass1==pass2:
+                dbu.auser(user,pass1)
+                return render_template("index.html")
+    return redirect(url_for('reg'))
+    
 @app.route("/auth", methods=['GET','POST'])
 def auth():
-    try:
-        username=request.form['user']
-        password=dbu.spass(username)
-        if password==request.form['pass']:
-            friends = dbu.sfriend(username)
-            return render_template("userprofile.html", currTime = timerTime, username = username, friendlist = friends)
-    except:
-        return render_template("index.html", currTime = timerTime)
-    return render_template("index.html", currTime = timerTime)
+    if request.method=="POST":
+        try:
+            user=request.form['user']
+            password=dbu.spass(user)
+            if password==request.form['pass']:
+                friends = dbu.sfriend(user)
+                return render_template("userprofile.html", currTime = timerTime, username = user, friendlist = friends)            
+        except:
+            return redirect(url_for('login'))
+    return redirect(url_for('login'))
+#    return render_template("index.html", currTime = timerTime)
+    
 
 @app.route("/game", methods=["GET", "POST"])
 def game():

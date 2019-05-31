@@ -1,9 +1,10 @@
 import sqlite3
 
+
+DB_FILE="data/login.db"
 #makes users and friends table
 def build():
-    DB_FILE="data/login.db"
-    db=sqlite3.connect("../" + DB_FILE)
+    db=sqlite3.connect(DB_FILE)
     c=db.cursor()
     command="CREATE TABLE IF NOT EXISTS users(username TEXT, password TEXT)"
     c.execute(command)
@@ -14,7 +15,6 @@ def build():
 
 #search/get user
 def suser(username):
-    DB_FILE="data/login.db"
     db=sqlite3.connect(DB_FILE)
     c=db.cursor()
     command="SELECT username FROM users WHERE users.username=(?)"
@@ -24,7 +24,6 @@ def suser(username):
 
 #search/get password
 def spass(username):
-    DB_FILE="data/login.db"
     db=sqlite3.connect(DB_FILE)
     c=db.cursor()
     command="SELECT password FROM users WHERE users.username=(?)"
@@ -33,16 +32,14 @@ def spass(username):
 
 #search/get friends
 def sfriend(username):
-    DB_FILE="data/login.db"
     db=sqlite3.connect(DB_FILE)
     c=db.cursor()
-    command="SELECT friend FROM friends WHERE users.username=(?)"
+    command="SELECT friend FROM friends WHERE friends.username=(?)"
     c.execute(command,(username))
     return c.fetchall()
 
 #add user
 def auser(username, password):
-    DB_FILE="data/login.db"
     db=sqlite3.connect(DB_FILE)
     c=db.cursor()
     command="INSERT INTO users VALUES(?,?)"
@@ -52,7 +49,6 @@ def auser(username, password):
 
 #add friend
 def afriend(username):
-    DB_FILE="data/login.db"
     db=sqlite3.connect(DB_FILE)
     c=db.cursor()
     command="INSERT INTO friends VALUES(?)"
@@ -60,4 +56,8 @@ def afriend(username):
     db.commit()
     db.close()
 
+
+
+if __name__ == '__main__':
+    build()
 
