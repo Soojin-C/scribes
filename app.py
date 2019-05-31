@@ -1,9 +1,13 @@
 from flask_socketio import SocketIO, join_room, leave_room, emit, send
 from flask import Flask, render_template, request, session, url_for, redirect
-from util import db_user as dbu
+
 import threading
 import os
 
+# from scribble.util import db_user as dbu
+# from scribble.util import Game
+
+from util import db_user as dbu
 from util import Game
 
 app = Flask(__name__)

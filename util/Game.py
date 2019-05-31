@@ -1,6 +1,9 @@
-import random
+import random #, os
 
-defaultWords = set(x.lower() for x in open("static/wordlist.txt",'r').read().split())
+path = "static/wordlist.txt"
+# path = os.path.dirname(__file__) + "/../" + path
+
+defaultWords = set(x.lower() for x in open(path,'r').read().split())
 # print(defaultWords)
 
 def newGame(firstPlayer, maxTime = 10, maxRounds = 3, wordPool = defaultWords): #Creates a new game
