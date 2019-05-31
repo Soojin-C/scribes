@@ -53,8 +53,10 @@ def auth():
     if request.method=="POST":
         try:
             user=request.form['user']
+            #print(user)
             password=dbu.spass(user)
-            if password==request.form['pass']:
+            #print(password)
+            if password[0]==request.form['pass']:
                 friends = dbu.sfriend(user)
                 return render_template("userprofile.html", currTime = timerTime, username = user, friendlist = friends)            
         except:
