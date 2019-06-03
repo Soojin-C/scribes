@@ -391,3 +391,6 @@ sendbutton.addEventListener("click", function(e){
   e.preventDefault();
   sendMessage();
 });
+
+var picurl = canvas.toDataURL()
+console.log(picurl)

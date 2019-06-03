@@ -3,6 +3,8 @@ var timer = document.getElementById('timer');
 var canvas = document.getElementById('drawingCanvas');
 var ctx = canvas.getContext('2d');
 var clearbtn = document.getElementById('clearbtn');
+var finishbtn = document.getElementById('finishbtn');
+
 
 var isDrawing = false;
 var prevX = 0;
@@ -88,6 +90,17 @@ canvas.addEventListener('mouseout', function(e) {
 
 canvas.addEventListener('mouseup', function(e) {
   isDrawing = false;
+});
+
+var finishdrawing = function(e) {
+  var picurl = canvas.toDataURL();
+  return picurl;
+};
+
+finishbtn.addEventListener('click', function(e){
+  isDrawing = false;
+  //finishdrawing();
+  console.log(finishdrawing());
 });
 
 canvas.addEventListener("wheel", function(e) {
