@@ -1,31 +1,56 @@
 {% extends "base.html" %}
 {% block body %}
-<center>
-  <form method="POST" action="/auth">
-    Username:
-    <input type="text" id="user" name="user" placeholder="Input username"><br>
-    Password:
-    <input type="password" id="pass" name="pass" placeholder="Input password"><br>
-        
-    <input id="show" type="checkbox" onclick="showPass()"><label for="show">Show password</label><br>
-    
-    <input type="submit" value="Log in">
-  </form>
-</center>
+
 <br>
 <br>
-<a role="button" class="btn btn-light" href="/">Back</button>
+
+<div class = "container">
+  <div class = "row">
+    <div class = "col-2">
+    </div>
+    <div class = "col-8">
+      <form method="POST" action="/auth">
+        <div class = "form-group row">
+          <label for="user" class="col-sm-2 col-form-label" >Username:</label>
+          <div class = "col-sm-10">
+            <input type="text" class="form-control" id="user" name="user" placeholder="Input username"><br>
+          </div>
+        </div>
+        <div class = "form-group row">
+          <label for="pass" class="col-sm-2 col-form-label">Password:</label>
+          <div class = "col-sm-10">
+            <input type="password" class="form-control" id="pass" name="pass" placeholder="Input password"><br>
+          </div>
+        </div>
+        <div class = "form-check">
+          <input class = "form-check-input" id="show" type="checkbox" onclick="showPass()">
+          <label class="form-check-label" for="show"> Show password </label>
+        </div>
+        <br>
+        <center>
+          <button type="submit" class="btn btn-outline-primary">Log in</button>
+        </center>
+      </form>
+    </div>
+    <div class = "col-2">
+    </div>
+  </div>
+</div>
+
+<br>
+<br>
+<a role="button" class="btn btn-light" href="/">Back</a>
 
 
 <script>
   function showPass(){
-  var i=document.getElementById("pass")
-  if(i.type=="password"){
-  i.type="text";
-  }
-  else{
-  i.type="password";
-  }
+    var i = document.getElementById("pass")
+    if (i.type=="password"){
+      i.type="text";
+    }
+    else{
+      i.type="password";
+    }
   }
 </script>
 

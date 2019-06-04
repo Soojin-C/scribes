@@ -76,10 +76,14 @@ var hsv_to_rbg = function(h, s, v){
 var center = [75,75]
 var max_rad = 70
 //var clrWheel = document.getElementById("clrWheel")
-var clrWheel = d3.select("body")
+///*
+var clrWheel = d3.select("#clrwheel")
                  .append("svg")
                  .attr("width", 150)
                  .attr("height", 150)
+//*/
+//var clrWheel = document.getElementById("clrwheel")
+//console.log(clrWheel)
 var colorWheel = function(){
   for (var i = 0; i < 150; i++){
     //var temp = []
@@ -129,6 +133,72 @@ function rgb(color){
 
 colorWheel()
 //console.log(colorData)
+var clrSelect = d3.select("#clrwheel")
+                  .append("svg")
+                  .attr("width", 500)
+                  .attr("height", 500)
+
+
+var colorList = ["red", "orange", "yellow", "green", "blue", "purple", "pink", "black"]
+var count = 0
+for (var j = 0; j < colorList.length; j++){
+  if (j % 4 == 0){
+    var xxx = 10 + (30 * 4)
+    var yyy = 10 + (30 * (count ))
+    clrSelect.append("rect")
+              .attr("x", xxx)
+              .attr("y", yyy)
+              .attr("width", 60)
+              .attr("height", 30)
+              .attr("fill", "white")
+              .on("click",function(){
+                newC = this.getAttribute("fill")
+                console.log(newC)
+                color = newC
+                //console.log(see)
+                //see.setAttribute("fill", newC)
+              })
+    count = count + 1
+  }
+  clrSelect.append("rect")
+            .attr("x", 10 + (30 * (j % 4)))
+            .attr("y", 10 + (30 * (count - 1)))
+            .attr("width", 30)
+            .attr("height", 30)
+            .attr("fill", colorList[j])
+            .on("click",function(){
+              newC = this.getAttribute("fill")
+              console.log(newC)
+              color = newC
+              //console.log(see)
+              //see.setAttribute("fill", newC)
+            })
+  }
+  clrSelect.append("line")
+          .attr("x1", 10 + (30 * 6))
+          .attr("y1", 10)
+          .attr("x2", 10 + (30 * 6))
+          .attr("y2", 10 + 60)
+          .attr("stroke", "black")
+  clrSelect.append("line")
+          .attr("x1", 10)
+          .attr("y1", 10 + 60)
+          .attr("x2", 10 + (30 * 6))
+          .attr("y2", 10 + 60)
+          .attr("stroke", "black")
+  clrSelect.append("line")
+          .attr("x1", 10)
+          .attr("y1", 10)
+          .attr("x2", 10 + (30 * 6))
+          .attr("y2", 10)
+          .attr("stroke", "black")
+  clrSelect.append("line")
+          .attr("x1", 10)
+          .attr("y1", 10)
+          .attr("x2", 10)
+          .attr("y2", 10 + 60)
+          .attr("stroke", "black")
+
 //================================================
 
 ctx.lineCap = 'round';

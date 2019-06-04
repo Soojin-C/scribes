@@ -1,22 +1,50 @@
 {% extends "base.html" %}
 {% block body %}
-<center>
-  <form method="POST" action="/register">
-    Username:
-    <input type="text" name="user" placeholder="Input username"><br>
 
-    Password:
-    <input type="password" id="pass" name="pass" placeholder="Input password"><br>
-    Re-enter Password:
-    <input type="password" id="pass2" name="pass2" placeholder="Re-enter password"><br>
-    
-    <input id="show" type="checkbox" onclick="showPass()"><label for="show">Show password</label><br>
-    
-    <input type="submit" value="Register">
-  </form>
+<br>
+<br>
 
-  
-</center>
+<div class = "container">
+  <div class = "row">
+    <div class = "col-2">
+    </div>
+    <div class = "col-8">
+
+      <form method="POST" action="/register">
+        <div class = "form-group row">
+          <label for="user" class="col-sm-2 col-form-label" >Username:</label>
+          <div class = "col-sm-10">
+            <input type="text" class="form-control" id="user" name="user" placeholder="Input username"><br>
+          </div>
+        </div>
+        <div class = "form-group row">
+          <label for="pass" class="col-sm-2 col-form-label">Password:</label>
+          <div class = "col-sm-10">
+            <input type="password" class="form-control" id="pass" name="pass" placeholder="Input password"><br>
+          </div>
+        </div>
+        <div class = "form-group row">
+          <label for="pass2" class="col-sm-2 col-form-label">Re-enter Password:</label>
+          <div class = "col-sm-10">
+            <input type="password" class="form-control" id="pass2" name="pass" placeholder="Re-enter password"><br>
+          </div>
+        </div>
+        <div class = "form-check">
+          <input class = "form-check-input" id="show" type="checkbox" onclick="showPass()">
+          <label class="form-check-label" for="show"> Show password </label>
+        </div>
+        <br>
+        <center>
+          <button type="submit" class="btn btn-outline-primary">Register</button>
+        </center>
+      </form>
+
+    </div>
+    <div class = "col-2">
+    </div>
+  </div>
+</div>
+
 <br>
 <br>
 <a role="button" class="btn btn-light" href="/">Back</button>
