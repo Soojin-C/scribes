@@ -14,17 +14,19 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(32)
 socketio = SocketIO(app, allow_upgrades = False)
 
+timerThread = None
 continueTimer = True
 timerTime = 60 #Timer to be displayed
 rooms = {} #request.sid : roomID
 games = {} #roomID : game info dictionary
+timeout = {} #roomID : timer to disconnect sockets
 
 @app.before_first_request #Executed upon startup
 def setup():
     try:
         dbu.build()
     except:
-        countdown()
+        pass
     countdown() #Start countdown timer
 
 @app.route("/")
@@ -51,7 +53,7 @@ def regis():
                 dbu.auser(user,pass1)
                 return render_template("index.html")
     return redirect(url_for('reg'))
-    
+
 @app.route("/auth", methods=['GET','POST'])
 def auth():
     #if request.method=="POST":
@@ -66,12 +68,12 @@ def auth():
         #print(request.form['pass'])
         if password[0]==request.form['pass']:
             friends = dbu.sfriend(user)
-            return render_template("userprofile.html", currTime = timerTime, username = user, friendlist = friends)            
+            return render_template("userprofile.html", currTime = timerTime, username = user, friendlist = friends)
     except:
         return redirect(url_for('login'))
     return redirect(url_for('login'))
 #    return render_template("index.html", currTime = timerTime)
-    
+
 
 @app.route("/game", methods=["GET", "POST"])
 def game():
@@ -142,7 +144,6 @@ def countdown():
                 socketio.emit('yourturn', room = currGame['order'][currGame['currDrawer']])
             # print(games[roomID]['timerTime'])
             socketio.emit('updateTimer', currGame['timerTime'], room = roomID)
-
 
 @socketio.on('message')
 def message(msg, methods=['GET','POST']):
