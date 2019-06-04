@@ -331,6 +331,7 @@ socket.on('connect', function() { //Executed upon opening the site
 });
 
 socket.on('yourturn', function(data) {
+  console.log(data);
   isCurrDrawer = true;
 });
 

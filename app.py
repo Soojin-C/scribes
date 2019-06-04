@@ -12,7 +12,7 @@ from util import Game
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(32)
-socketio = SocketIO(app, allow_upgrades = False)
+socketio = SocketIO(app, ping_interval = 1, ping_timeout = 5, allow_upgrades = False)
 
 continueTimer = True
 timerTime = 60 #Timer to be displayed
@@ -24,7 +24,7 @@ def setup():
     try:
         dbu.build()
     except:
-        countdown()
+        pass
     countdown() #Start countdown timer
 
 @app.route("/")
@@ -39,36 +39,41 @@ def login():
 def reg():
     return render_template("register.html")
 
-
 @app.route("/register", methods=["POST","GET"])
 def regis():
-    if request.method=="POST":
-        user=request.form['user']
-        pass1=request.form['pass']
-        pass2=request.form['pass2']
-        if len(pass1)>0 and len(user)>0:
-            if pass1==pass2:
-                dbu.auser(user,pass1)
-                return render_template("index.html")
-    return redirect(url_for('reg'))
-    
+        if request.method=="POST":
+            user=request.form['user']
+            try:
+                use=dbu.suser(user)
+            except:
+                use=None
+            if (use):
+                flash("user exists")
+                return redirect(url_for('reg'))
+            pass1=request.form['pass']
+            pass2=request.form['pass2']
+            if len(pass1)>0 and len(user)>0:
+                if pass1==pass2:
+                    dbu.auser(user,pass1)
+                    flash("user made")
+                    return render_template("index.html")   
+        flash("passwords do not match")
+        return redirect(url_for('reg'))
+        
 @app.route("/auth", methods=['GET','POST'])
 def auth():
-    #if request.method=="POST":
     try:
         user=request.form['user']
-        #print(user)
-        #print(request.form['pass'])
         password=dbu.spass(user)
-        #print("pass")
-        #print(password)
-        #print(password[0])
-        #print(request.form['pass'])
         if password[0]==request.form['pass']:
             friends = dbu.sfriend(user)
+            for i in range(0,len(friends)):
+                friends[i]=friends[i][0]
             return render_template("userprofile.html", currTime = timerTime, username = user, friendlist = friends)            
     except:
+        flash("wrong username or password")
         return redirect(url_for('login'))
+    flash("wrong username or password")
     return redirect(url_for('login'))
 #    return render_template("index.html", currTime = timerTime)
     
@@ -139,10 +144,9 @@ def countdown():
                 currGame['timerTime'] = currGame['maxTime']
                 socketio.emit('notyourturn', room = currGame['order'][currGame['currDrawer']])
                 Game.nextUser(currGame)
-                socketio.emit('yourturn', room = currGame['order'][currGame['currDrawer']])
+                socketio.emit('yourturn', currGame['offeredWords'], room = currGame['order'][currGame['currDrawer']])
             # print(games[roomID]['timerTime'])
             socketio.emit('updateTimer', currGame['timerTime'], room = roomID)
-
 
 @socketio.on('message')
 def message(msg, methods=['GET','POST']):
