@@ -8,13 +8,12 @@
           {{currTime}}
         </div>
       <canvas id='drawingCanvas' height="500" width="720" style='border: 1px solid black'></canvas><br>
-      <button id='clearbtn' onclick='clearBoard()'>Clear Board</button>
       </div>
       <div class="col-sm-4">
         <div class = "row">
           <div id="chat">
             <h4>Chatlog</h4>
-            <ul style="list-style: none; padding-left: 0;" id="chatlog">
+            <ul style="list-style: none; padding-left: 0; overflow-y: scroll; word-wrap: break-word; width: 200px; height: 250px" id="chatlog">
               <li>&nbsp;</li>
               <li>&nbsp;</li>
               <li>&nbsp;</li>
@@ -31,6 +30,7 @@
             <input type="submit" id="send"/>
           </div>
         </div>
+        <button id='clearbtn' onclick='clearBoard()'>Clear Board</button>
         <div id = "clrwheel" class = "row">
 
         </div>

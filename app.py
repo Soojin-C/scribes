@@ -56,10 +56,10 @@ def regis():
                 if pass1==pass2:
                     dbu.auser(user,pass1)
                     flash("user made")
-                    return render_template("index.html")   
+                    return render_template("index.html")
         flash("passwords do not match")
         return redirect(url_for('reg'))
-        
+
 @app.route("/auth", methods=['GET','POST'])
 def auth():
     try:
@@ -69,14 +69,14 @@ def auth():
             friends = dbu.sfriend(user)
             for i in range(0,len(friends)):
                 friends[i]=friends[i][0]
-            return render_template("userprofile.html", currTime = timerTime, username = user, friendlist = friends)            
+            return render_template("userprofile.html", currTime = timerTime, username = user, friendlist = friends)
     except:
         flash("wrong username or password")
         return redirect(url_for('login'))
     flash("wrong username or password")
     return redirect(url_for('login'))
 #    return render_template("index.html", currTime = timerTime)
-    
+
 
 @app.route("/game", methods=["GET", "POST"])
 def game():
@@ -95,7 +95,7 @@ def joinRoom(roomID):
     join_room(roomID) #Places user in a room
     if roomID not in games: #Create new game
         games[roomID] = Game.newGame(request.sid)
-        emit('yourturn')
+        emit('yourturn', games[roomID]['offeredWords'])
     else:
         Game.addUser(games[roomID],request.sid)
     rooms[request.sid] = roomID #Sets room of user in a dictionary for later use

@@ -6,6 +6,9 @@ path = "static/wordlist.txt"
 defaultWords = set(x.lower() for x in open(path,'r').read().split())
 # print(defaultWords)
 
+DRAWING = 0
+CHOOSING = 1
+
 def newGame(firstPlayer, maxTime = 10, maxRounds = 3, wordPool = defaultWords): #Creates a new game
     output = {}
     output['players'] = set() #request.sid
@@ -23,6 +26,7 @@ def newGame(firstPlayer, maxTime = 10, maxRounds = 3, wordPool = defaultWords): 
     output['maxRounds'] = maxRounds
     output['round'] = 1
     output['currLines'] = []
+    output['gameState'] = CHOOSING
     return output
 
 def addUser(game,user): #Adds user to a game
@@ -46,7 +50,7 @@ def chooseWord(game, index):
     if type(index) != type(1) or index < 0 or index > 2:
         game['currWord'] = random.choice(game['offeredWords'])
     else:
-        game['currWord'] = game['offeredWords']
+        game['currWord'] = game['offeredWords'][index]
 
 def nextUser(game, keepIndex = False):
     if not(keepIndex): #Not executed if the current drawer is removed
