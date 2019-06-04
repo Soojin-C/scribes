@@ -12,14 +12,12 @@ from util import Game
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(32)
-socketio = SocketIO(app, allow_upgrades = False)
+socketio = SocketIO(app, ping_interval = 1, ping_timeout = 5, allow_upgrades = False)
 
-timerThread = None
 continueTimer = True
 timerTime = 60 #Timer to be displayed
 rooms = {} #request.sid : roomID
 games = {} #roomID : game info dictionary
-timeout = {} #roomID : timer to disconnect sockets
 
 @app.before_first_request #Executed upon startup
 def setup():
@@ -141,7 +139,7 @@ def countdown():
                 currGame['timerTime'] = currGame['maxTime']
                 socketio.emit('notyourturn', room = currGame['order'][currGame['currDrawer']])
                 Game.nextUser(currGame)
-                socketio.emit('yourturn', room = currGame['order'][currGame['currDrawer']])
+                socketio.emit('yourturn', currGame['offeredWords'], room = currGame['order'][currGame['currDrawer']])
             # print(games[roomID]['timerTime'])
             socketio.emit('updateTimer', currGame['timerTime'], room = roomID)
 
