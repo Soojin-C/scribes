@@ -343,12 +343,15 @@ socket.on('yourturn', function(data) {
   wordSelection.children[2].innerHTML = data[2];
   wordSelection.style.display = 'block';
   console.log(data);
+});
+
+socket.on('startDrawing', function(data) {
   isCurrDrawer = true;
+  wordSelection.style.display = 'none';
 });
 
 socket.on('notyourturn', function(data) {
   isCurrDrawer = false;
-  wordSelection.style.display = 'none';
 });
 
 socket.on('recieveLines', function(lines) {

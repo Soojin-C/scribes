@@ -51,9 +51,12 @@ def chooseWord(game, index):
         game['currWord'] = random.choice(game['offeredWords'])
     else:
         game['currWord'] = game['offeredWords'][index]
+    game['gameState'] = DRAWING
 
 def nextUser(game, keepIndex = False):
+    game['gameState'] = CHOOSING
     game['offeredWords'] = random.sample(game['wordPool'], 3)
+    game['currWord'] = ''
     if not(keepIndex): #Not executed if the current drawer is removed
         game['currDrawer'] += 1
     if game['currDrawer'] >= len(game['players']): #Increments round or ends game if all players have gone
@@ -75,12 +78,12 @@ def getcurrDrawer(game):
     return game['currDrawer']
 
 
-
-currgame = newGame("playerid0")
-#fillWordPool(currgame)
-print(currgame)
-print(randword(currgame))
-addUser(currgame, "user0")
-print(getcurrDrawer(currgame))
-nextUser(currgame)
-print(getcurrDrawer(currgame))
+if __name__ == '__main__':
+    currgame = newGame("playerid0")
+    #fillWordPool(currgame)
+    print(currgame)
+    print(randword(currgame))
+    addUser(currgame, "user0")
+    print(getcurrDrawer(currgame))
+    nextUser(currgame)
+    print(getcurrDrawer(currgame))

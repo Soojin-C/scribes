@@ -75,7 +75,7 @@ def regis():
 def auth():
     if 'username' in session:
         return redirect(url_for("auth"))
-        
+
     try:
         global user
         user=request.form['user']
@@ -101,7 +101,7 @@ def home():
             friends[i]=friends[i][0]
         return render_template("userprofile.html", currTime = timerTime, username = user, friendlist = friends)
     return redirect(url_for("root"))
-             
+
 @app.route("/logout")
 def logout():
     if 'username' in session:
@@ -135,9 +135,13 @@ def joinRoom(roomID):
 def disconn(): #Executed when a client disconnects from the server
     print(request.sid + "Left")
     if request.sid in rooms:
+        currGame = games[rooms[request.sid]]
         Game.removeUser(games[rooms[request.sid]], request.sid)
-        if len(games[rooms[request.sid]]['players']) == 0: #Deletes game room if no-one is in it
+        if len(currGame['players']) == 0: #Deletes game room if no-one is in it
             games.pop(rooms[request.sid])
+        else:
+            currGame['timerTime'] = 5 #Time a player has to choose a word
+            socketio.emit('yourturn', currGame['offeredWords'], room = currGame['order'][currGame['currDrawer']])
         rooms.pop(request.sid)
 
 @socketio.on('requestLines')
@@ -154,7 +158,7 @@ def clearBoard(data):
 def newLine(line):
     currGame = games[rooms[request.sid]]
     # print(currGame['order'], currGame['currDrawer'])
-    if (request.sid != currGame['order'][currGame['currDrawer']]):
+    if (request.sid != currGame['order'][currGame['currDrawer']] or currGame['currWord'] == ''):
         return
     games[rooms[request.sid]]['currLines'].append(line);
     # print(line);
@@ -163,9 +167,11 @@ def newLine(line):
 @socketio.on('chooseWord')
 def chooseWord(index):
     currGame = games[rooms[request.sid]]
-    if (request.sid != currGame['order'][currGame['currDrawer']]):
+    if (request.sid != currGame['order'][currGame['currDrawer']] or currGame['currWord'] != ''):
         return
     Game.chooseWord(currGame, index)
+    currGame['timerTime'] = currGame['maxTime'] #Start drawing
+    emit('startDrawing')
     send('<b>You have chosen ' + currGame['currWord'] + '</b>')
 
 def countdown():
@@ -179,10 +185,18 @@ def countdown():
             print(currGame['order'], currGame['currDrawer'], currGame['players'])
             currGame['timerTime'] -= 1
             if currGame['timerTime'] <= -1:
-                currGame['timerTime'] = currGame['maxTime']
-                socketio.emit('notyourturn', room = currGame['order'][currGame['currDrawer']])
-                Game.nextUser(currGame)
-                socketio.emit('yourturn', currGame['offeredWords'], room = currGame['order'][currGame['currDrawer']])
+                print(currGame['gameState'])
+                if currGame['gameState'] == Game.DRAWING: #Executed when time runs out as a player is drawing
+                    currGame['timerTime'] = 5 #Time a player has to choose a word
+                    socketio.emit('notyourturn', room = currGame['order'][currGame['currDrawer']])
+                    Game.nextUser(currGame)
+                    socketio.emit('yourturn', currGame['offeredWords'], room = currGame['order'][currGame['currDrawer']])
+                elif currGame['gameState'] == Game.CHOOSING: #Executed when time runs out as a player is choosing a word
+                    Game.chooseWord(currGame, None)
+                    currGame['timerTime'] = currGame['maxTime'] #Start drawing
+                    socketio.send('<b>You have chosen ' + currGame['currWord'] + '</b>', room = currGame['order'][currGame['currDrawer']])
+                    socketio.emit('startDrawing', room = currGame['order'][currGame['currDrawer']])
+
             # print(games[roomID]['timerTime'])
             socketio.emit('updateTimer', currGame['timerTime'], room = roomID)
 
