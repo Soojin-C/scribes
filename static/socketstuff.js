@@ -442,9 +442,6 @@ socket.on("message", function(msg){
   var chatlog = document.getElementById('chatlog');
   var newMsg = document.createElement('li');
   var children = chatlog.children;
-  if (children.length > 10) {
-    chatlog.removeChild(children[0]);
-  }
   newMsg.innerHTML = msg;
   chatlog.appendChild(newMsg)
 });
