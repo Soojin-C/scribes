@@ -19,6 +19,7 @@ timerTime = 60 #Timer to be displayed
 rooms = {} #request.sid : roomID
 games = {} #roomID : game info dictionary
 
+
 @app.before_first_request #Executed upon startup
 def setup():
     try:
@@ -29,47 +30,62 @@ def setup():
 
 @app.route("/")
 def root():
+    if 'username' in session:
+        return redirect(url_for("home"))
     return render_template("index.html", currTime = timerTime)
 
 @app.route("/login")
 def login():
+    if 'username' in session:
+        return redirect(url_for("home"))
     return render_template("login.html")
 
 @app.route("/reg")
 def reg():
+    if 'username' in session:
+        return redirect(url_for("home"))
     return render_template("register.html")
 
 @app.route("/register", methods=["POST","GET"])
 def regis():
-        if request.method=="POST":
-            user=request.form['user']
-            try:
-                use=dbu.suser(user)
-            except:
-                use=None
-            if (use):
-                flash("user exists")
-                return redirect(url_for('reg'))
-            pass1=request.form['pass']
-            pass2=request.form['pass2']
-            if len(pass1)>0 and len(user)>0:
-                if pass1==pass2:
-                    dbu.auser(user,pass1)
-                    flash("user made")
-                    return render_template("index.html")
-        flash("passwords do not match")
-        return redirect(url_for('reg'))
+    if 'username' in session:
+        return redirect(url_for("home"))
+    if request.method=="POST":
+        user=request.form['user']
+        try:
+            use=dbu.suser(user)
+        except:
+            use=None
+        if (use):
+            flash("user exists")
+            return redirect(url_for('reg'))
+        pass1=request.form['pass']
+        pass2=request.form['pass2']
+        if len(pass1)>0 and len(user)>0:
+            if pass1==pass2:
+                dbu.auser(user,pass1)
+                flash("user made")
+                return render_template("index.html")
+    flash("passwords do not match")
+    return redirect(url_for('reg'))
 
+#user=""
+#friends=[]
 @app.route("/auth", methods=['GET','POST'])
 def auth():
+    if 'username' in session:
+        return redirect(url_for("auth"))
+        
     try:
+        global user
         user=request.form['user']
         password=dbu.spass(user)
         if password[0]==request.form['pass']:
             friends = dbu.sfriend(user)
             for i in range(0,len(friends)):
                 friends[i]=friends[i][0]
-            return render_template("userprofile.html", currTime = timerTime, username = user, friendlist = friends)
+            session['username'] = user
+            return redirect(url_for("home"))
     except:
         flash("wrong username or password")
         return redirect(url_for('login'))
@@ -77,6 +93,20 @@ def auth():
     return redirect(url_for('login'))
 #    return render_template("index.html", currTime = timerTime)
 
+@app.route("/home")
+def home():
+    if 'username' in session:
+        friends = dbu.sfriend(user)
+        for i in range(0,len(friends)):
+            friends[i]=friends[i][0]
+        return render_template("userprofile.html", currTime = timerTime, username = user, friendlist = friends)
+    return redirect(url_for("root"))
+             
+@app.route("/logout")
+def logout():
+    if 'username' in session:
+        session.pop('username')
+    return redirect(url_for("root"))
 
 @app.route("/game", methods=["GET", "POST"])
 def game():
