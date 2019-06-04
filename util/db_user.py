@@ -50,11 +50,11 @@ def auser(username, password):
     db.close()
 
 #add friend
-def afriend(username):
+def afriend(username,friend):
     db=sqlite3.connect(DB_FILE)
     c=db.cursor()
-    command="INSERT INTO friends VALUES(?)"
-    c.execute(command,username)
+    command="INSERT INTO friends VALUES(?,?)"
+    c.execute(command,(username,friend))
     db.commit()
     db.close()
 
