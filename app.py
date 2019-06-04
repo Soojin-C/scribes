@@ -54,17 +54,21 @@ def regis():
     
 @app.route("/auth", methods=['GET','POST'])
 def auth():
-    if request.method=="POST":
-        try:
-            user=request.form['user']
-            #print(user)
-            password=dbu.spass(user)
-            #print(password)
-            if password[0]==request.form['pass']:
-                friends = dbu.sfriend(user)
-                return render_template("userprofile.html", currTime = timerTime, username = user, friendlist = friends)            
-        except:
-            return redirect(url_for('login'))
+    #if request.method=="POST":
+    try:
+        user=request.form['user']
+        #print(user)
+        #print(request.form['pass'])
+        password=dbu.spass(user)
+        #print("pass")
+        #print(password)
+        #print(password[0])
+        #print(request.form['pass'])
+        if password[0]==request.form['pass']:
+            friends = dbu.sfriend(user)
+            return render_template("userprofile.html", currTime = timerTime, username = user, friendlist = friends)            
+    except:
+        return redirect(url_for('login'))
     return redirect(url_for('login'))
 #    return render_template("index.html", currTime = timerTime)
     
