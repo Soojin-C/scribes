@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block body %}
-
+{% set msgs = get_flashed_messages() %}
+{% for each in msgs %}
+<p style="color:green;">{{each}}<p>
+{% endfor %}
 <!--
 Current Timer:
 div id='timer'>

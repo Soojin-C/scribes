@@ -9,6 +9,10 @@
     <div class = "col-2">
     </div>
     <div class = "col-8">
+      {% set msgs = get_flashed_messages() %}
+      {% for each in msgs %}
+      <center><p style="color:red;">{{each}}<p></center>
+      {% endfor %}
       <form method="POST" action="/auth">
         <div class = "form-group row">
           <label for="user" class="col-sm-2 col-form-label" >Username:</label>
