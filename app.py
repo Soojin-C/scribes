@@ -130,6 +130,14 @@ def newLine(line):
     # print(line);
     emit('newLine', line, broadcast = True, include_self = False, room = rooms[request.sid])
 
+@socketio.on('chooseWord')
+def chooseWord(index):
+    currGame = games[rooms[request.sid]]
+    if (request.sid != currGame['order'][currGame['currDrawer']]):
+        return
+    Game.chooseWord(currGame, index)
+    send('<b>You have chosen ' + currGame['currWord'] + '</b>')
+
 def countdown():
     global continueTimer, timerTime
     if continueTimer:

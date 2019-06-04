@@ -53,6 +53,7 @@ def chooseWord(game, index):
         game['currWord'] = game['offeredWords'][index]
 
 def nextUser(game, keepIndex = False):
+    game['offeredWords'] = random.sample(game['wordPool'], 3)
     if not(keepIndex): #Not executed if the current drawer is removed
         game['currDrawer'] += 1
     if game['currDrawer'] >= len(game['players']): #Increments round or ends game if all players have gone
@@ -60,7 +61,6 @@ def nextUser(game, keepIndex = False):
         game['currDrawer'] = 0
         if game['round'] > game['maxRounds']:
             return 'Game End'
-    game['offeredWords'] = random.sample(game['wordPool'], 3)
     print(game['offeredWords'])
 
 def fillWordPool(game):

@@ -5,6 +5,7 @@ var ctx = canvas.getContext('2d');
 var clearbtn = document.getElementById('clearbtn');
 var paintbtn = document.getElementById('paint');
 var penbtn = document.getElementById('pen');
+var wordSelection = document.getElementById('wordSelection');
 var isCurrDrawer = false;
 var fillTolerance = 25;
 
@@ -13,6 +14,8 @@ var drawMode = 'pen';
 var prevX = 0;
 var prevY = 0;
 var lineWidth = 3;
+
+wordSelection.style.display = 'none'; // Default no word selection shown
 
 // Set canvas background to opaque white
 ctx.fillStyle = 'rgba(255,255,255,1)';
@@ -316,6 +319,10 @@ var changeCursor = function() {
   cursorStyle.innerHTML = `#drawingCanvas { ${newCursor} }`;
 }
 
+var chooseWord = function(index) {
+  socket.emit('chooseWord', index);
+}
+
 var clearBoard = function(sendBack = true) {
   ctx.fillStyle = 'rgba(255,255,255,1)';
   ctx.fillRect(0,0,canvas.width,canvas.height); //Clears the entire canvas
@@ -331,12 +338,17 @@ socket.on('connect', function() { //Executed upon opening the site
 });
 
 socket.on('yourturn', function(data) {
+  wordSelection.children[0].innerHTML = data[0];
+  wordSelection.children[1].innerHTML = data[1];
+  wordSelection.children[2].innerHTML = data[2];
+  wordSelection.style.display = 'block';
   console.log(data);
   isCurrDrawer = true;
 });
 
 socket.on('notyourturn', function(data) {
   isCurrDrawer = false;
+  wordSelection.style.display = 'none';
 });
 
 socket.on('recieveLines', function(lines) {
