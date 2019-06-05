@@ -15,7 +15,7 @@ continueTimer = True
 timerTime = 60 #Timer to be displayed
 rooms = {} #request.sid : roomID
 games = {} #roomID : game info dictionary
-
+guessedCorrectly = set()
 
 
 @app.before_first_request #Executed upon startup
@@ -194,6 +194,7 @@ def countdown():
                 elif currGame['gameState'] == Game.CHOOSING: #Executed when time runs out as a player is choosing a word
                     Game.chooseWord(currGame, None)
                     socketio.send("<b>It is your turn to draw!</b>", room = currGame['order'][currGame['currDrawer']])
+                    guessedCorrectly.remove(request.sid)
                     currGame['timerTime'] = currGame['maxTime'] #Start drawing
                     socketio.send('<b>You have chosen ' + currGame['currWord'] + '</b>', room = currGame['order'][currGame['currDrawer']])
                     socketio.emit('startDrawing', room = currGame['order'][currGame['currDrawer']])
@@ -213,15 +214,17 @@ def message(msg, methods=['GET','POST']):
     if len(msg) != 0:
         if (request.sid != currGame['order'][currGame['currDrawer']]):
             guess = msg
+            if request.sid in guessedCorrectly:
+                send("You can't guess again.")
+                return
             if guess.lower() != currWord:
                 send(msg, broadcast=True)
             else:
                 send(Game.addPoints(currGame, request.sid))
                 send("<b>Correct!!!</b>")
-                
-
+                guessedCorrectly.add(request.sid)
         else: 
-            send("<b>You can't chat during your turn.</b>")
+            send("<b>You can't chat while drawing.</b>")
 
         #print(guess == currWord)
         #if guess == currWord:
