@@ -21,24 +21,25 @@ Soojin Choi(PM), Emily Lee, Kevin Lin, Angela Tom
 ### Run on Apache2
 1. Copy the https link under Clone and download
 2. ssh into your droplet through a user using `$ ssh <user>@<ip address>`
-3. Go to the directory www through `$ cd /var/www/` 
-4. Clone the repo and name the directory your chosen appname by running `$ git clone <link> <appname>`
+3. Go to the directory /var/www through `$ cd /var/www/` 
+4. Clone the repo and name the directory your chosen appname by running `$ sudo git clone <link> <appname>`
   * The tree of the directory should be:
       * appname
          * appname
          * appname.wsgi
+         * appname.conf
+5. Move the .conf file to the /etc/apache2/sites-enabled directory by running the command `$ sudo mv /var/www/appname/appname.conf /etc/apache2/sites-enabled`
   * Make sure you also have a <appname>.conf file with the path `/etc/apache2/sites-enabled/<appname>.conf`
   * Enable your site by running the command `$ sudo a2ensite <appname>`
-5. Install virtualenv by running `$ pip3 install virtualenv`
+6. Go into the first directory named appname and run both `$ sudo chgrp -R www-data <appname>`
+`$ sudo chmod -R g+w <appname>`
+7. Install virtualenv by running `$ pip3 install virtualenv`
    * Make a venv by running `$ python3 -m venv VENV_NAME`
    * Activate it by running `$ . ~/path_to_venv/VENV_NAME/bin/activate`
    * Deactivate it by running `$ deactivate`
-6. Activate your virtual environment 
-7. Go into the second directory named <appname> and run `$ pip install -r requirements.txt`
-8. After running everything above, run `$ sudo service apache2 restart`
-  * Run this anytime you make changes as well
-9. Go to your ip address to view your app
-10. If there are any problems, check the error log by running `$ sudo cat /var/log/apache2/error.log`
-
-`$ sudo chgrp -R www-data <appname>`
-`$ sudo chmod -R g+w <appname>`
+8. Activate your virtual environment 
+9. Go into the second directory named <appname> and run `$ pip install -r requirements.txt`
+10. After running everything above, run `$ sudo service apache2 restart`
+   * Run this anytime you make changes as well
+11. Go to your ip address to view your app
+12. If there are any problems, check the error log by running `$ sudo cat /var/log/apache2/error.log`
