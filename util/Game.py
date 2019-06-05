@@ -67,8 +67,8 @@ def nextUser(game, keepIndex = False):
     print(game['offeredWords'])
 
 def addPoints(game, user):
-    pass
-    #game['points'][user]
+    game['points'][user] += 10
+    return game['points'][user]
 
 def fillWordPool(game):
     words = open("static/wordlist.txt",'r').read().split()
