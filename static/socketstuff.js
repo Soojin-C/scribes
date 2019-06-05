@@ -235,6 +235,7 @@ var fill = function(x, y, fillColor, sendBack = true) {
   // console.log('startColor:');
   // console.log('rgba(' + startColor.join() + ',1)');
   ctx.fillStyle = fillColor;
+  var sendColor = fillColor;
   fillColor = fillColor.substring(5, fillColor.length - 3).split(',');
   for (var index = 0; index++; index < 3) {
     // console.log(fillColor);
@@ -295,7 +296,7 @@ var fill = function(x, y, fillColor, sendBack = true) {
 
   if (sendBack) {
     console.log('Send paint attempted');
-    // socket.emit('newLine', [x, y, fillColor]);
+    socket.emit('newLine', ['p', x, y, sendColor]);
   }
 }
 
@@ -331,6 +332,14 @@ var clearBoard = function(sendBack = true) {
   if (sendBack) {
     socket.emit('clearBoard', null);
   }
+}
+
+var setPen = function() {
+  drawMode = 'pen';
+}
+
+var setPaint = function() {
+  drawMode = 'fill';
 }
 
 socket.on('connect', function() { //Executed upon opening the site
@@ -369,7 +378,10 @@ socket.on('recieveLines', function(lines) {
 });
 
 socket.on('newLine', function(line) {
-  // console.log(line);
+  console.log(line);
+  if (line[0] == 'p') {
+    fill(line[1], line[2], line[3], sendBack = false);
+  }
   drawLine(line[0], line[1], line[2], line[3], line[5], sendBack = false, inputWidth = line[4]);
 });
 
