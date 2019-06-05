@@ -7,22 +7,31 @@
     <b>{{username}}</b></text>
 </center></font>
 
-
+<div class = "container">
+  <div class = "row justify-content-center">
+    <div class = 'col-md-2' style='text-align:center;'>
+      <form method="GET" action="/game">
+        <input class="form-control" type="text" value="" placeholder="Room ID" name='roomID' id="roomInput"></input>
+        <button type='submit' role="button" class="btn btn-light">Play</button>
+      </form>
+    </div>
+  </div>
+</div>
 
 <div class="container">
   <div class="row">
     <div class="col-sm">
-      <right><b>
-      Profile Picture</b>
+      <center><b>
+      Profile Picture</b><br><br>
 
-      <canvas id='drawingCanvas' height="500" width="500" style='border: 1px solid black'></canvas><br>
+      <canvas id='drawingCanvas' height="100" width="100" style='border: 1px solid black'></canvas><br><br>
       <button id='clearbtn' onclick='clearBoard()'>Clear Board</button>
       <button id='finishbtn' onclick='finishDrawing()'>Finish Drawing</button>
-      </div>
-    <div class="col-sm">
-    </div>
+    </div></center>
     
-    <div class="col-sm"><b>
+
+    
+    <div class="col-sm"><b><center>
       Friends</b>
       <br>
       {% for each in friendlist %}
@@ -30,7 +39,6 @@
       {% endfor %}
       <br/>
     </div>
-  </div><br>
-  <a role="button" class="btn btn-light" href="/">Back to Home</a>
+  </div><br></center>
   <script type="text/javascript" src="../static/userprofile.js"></script>
   {% endblock %}
