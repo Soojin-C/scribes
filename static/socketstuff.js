@@ -332,8 +332,13 @@ var clearBoard = function(sendBack = true) {
 }
 
 socket.on('connect', function() { //Executed upon opening the site
-  console.log('Successfully Connected');
-  socket.emit('joinRoom', 'General'); //Automatically join General
+  var params = (new URL(document.location)).searchParams;
+  var roomID = params.get('roomID');
+  if (roomID == null) { //Defaults room if user joins without specifying a roomID
+    roomID = 'Default';
+  }
+  socket.emit('joinRoom', roomID); //Join room specified by roomID parameter
+  console.log('Successfully Connected to ' + roomID);
   socket.emit('requestLines', null);
 });
 
@@ -462,7 +467,7 @@ socket.on("message", function(msg){
 });
 
 msgbox.addEventListener("keydown", function(e){
-  if (e.keyCode == 13){
+  if (e.keyCode == 13){ //Check for enter key press
     e.preventDefault();
     sendMessage();
   }

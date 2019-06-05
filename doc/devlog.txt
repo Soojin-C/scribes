@@ -139,9 +139,10 @@ angelaT -- 2019-06-02 19:55
 - user profile
 - working on drawing your pic + saving it
 ==============================================================
-kevinL -- 2019-06-04 18:14
+kevinL -- 2019-06-04 21:13
 --------------------------------------------------------------
 - Timer bug
 - Faster disconnect detection with heartbeat
 - Word selection
+- Separate rooms
 ==============================================================
