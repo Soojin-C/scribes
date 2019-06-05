@@ -7,7 +7,6 @@ var paintbtn = document.getElementById('paint');
 var penbtn = document.getElementById('pen');
 var wordSelection = document.getElementById('wordSelection');
 var isCurrDrawer = false;
-var fillTolerance = 25;
 
 var isDrawing = false;
 var drawMode = 'pen';
@@ -211,11 +210,11 @@ ctx.lineCap = 'round';
 
 var equalColor = function(startColor, lookupPos, imgData) {
   //Get RGB values of the current pixel
-  var dr = (imgData.data[lookupPos] - startColor[0]) ** 2;
-  var dg = (imgData.data[lookupPos + 1] - startColor[1]) ** 2;
-  var db = (imgData.data[lookupPos + 2] - startColor[2]) ** 2;
+  var r = imgData.data[lookupPos];
+  var g = imgData.data[lookupPos + 1];
+  var b = imgData.data[lookupPos + 2];
   //Compare to the starting pixel and return the result
-  return (dr + dg + db < fillTolerance);
+  return r == startColor[0] && g == startColor[1] && b == startColor[2];
 }
 
 var setColor = function(pixelPos, color, imgData) {
@@ -337,7 +336,7 @@ var clearBoard = function(sendBack = true) {
 socket.on('connect', function() { //Executed upon opening the site
   var params = (new URL(document.location)).searchParams;
   var roomID = params.get('roomID');
-  if (roomID == null) { //Defaults room if user joins without specifying a roomID
+  if (roomID == null || roomID == '') { //Defaults room if user joins without specifying a roomID
     roomID = 'Default';
   }
   socket.emit('joinRoom', roomID); //Join room specified by roomID parameter
