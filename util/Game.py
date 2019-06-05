@@ -1,7 +1,7 @@
-import random #, os
+import random , os
 
 path = "static/wordlist.txt"
-# path = os.path.dirname(__file__) + "/../" + path
+path = os.path.dirname(__file__) + "/../" + path
 
 defaultWords = set(x.lower() for x in open(path,'r').read().split())
 # print(defaultWords)
@@ -65,6 +65,10 @@ def nextUser(game, keepIndex = False):
         if game['round'] > game['maxRounds']:
             return 'Game End'
     print(game['offeredWords'])
+
+def addPoints(game, user):
+    pass
+    #game['points'][user]
 
 def fillWordPool(game):
     words = open("static/wordlist.txt",'r').read().split()
