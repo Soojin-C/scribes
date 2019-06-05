@@ -27,6 +27,7 @@ def newGame(firstPlayer, maxTime = 10, maxRounds = 3, wordPool = defaultWords): 
     output['round'] = 1
     output['currLines'] = []
     output['gameState'] = CHOOSING
+    output['guessedCorrectly'] = set()
     return output
 
 def addUser(game,user): #Adds user to a game
