@@ -218,9 +218,9 @@ def message(msg, methods=['GET','POST']):
             else:
                 send(Game.addPoints(currGame, request.sid))
                 send("<b>Correct!!!</b>")
-                
 
-        else: 
+
+        else:
             send("<b>You can't chat during your turn.</b>")
 
         #print(guess == currWord)
