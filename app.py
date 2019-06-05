@@ -110,6 +110,8 @@ def logout():
 
 @app.route("/game", methods=["GET", "POST"])
 def game():
+    if 'username' in session:
+        return render_template("game2.html")
     return render_template("game.html")
 
 @socketio.on("joinRoom")
