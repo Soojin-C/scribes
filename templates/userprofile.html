@@ -1,17 +1,36 @@
 {% extends "base2.html" %}
 {% block body %}
-Your username:
-{{username}}
-<br/>
-Your friends 
-{{friendlist}}
-<br/>
-Your profile picture:
+<br>
+<font size="6"><center><i>
+    Welcome</i>  &nbsp
+    <text style="font-family:courier;">
+    <b>{{username}}</b></text>
+</center></font>
 
-<canvas id='drawingCanvas' height="500" width="1000" style='border: 1px solid black'></canvas><br>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm">
+      <right><b>
+      Profile Picture</b>
+
+      <canvas id='drawingCanvas' height="500" width="500" style='border: 1px solid black'></canvas><br>
       <button id='clearbtn' onclick='clearBoard()'>Clear Board</button>
       <button id='finishbtn' onclick='finishDrawing()'>Finish Drawing</button>
-
-<a role="button" class="btn btn-light" href="/">Back to Home</a>
-<script type="text/javascript" src="../static/userprofile.js"></script>
-{% endblock %}
+      </div>
+    <div class="col-sm">
+    </div>
+    
+    <div class="col-sm"><b>
+      Friends</b>
+      <br>
+      {% for each in friendlist %}
+      {{each}}<br>
+      {% endfor %}
+      <br/>
+    </div>
+  </div><br>
+  <a role="button" class="btn btn-light" href="/">Back to Home</a>
+  <script type="text/javascript" src="../static/userprofile.js"></script>
+  {% endblock %}

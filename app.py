@@ -193,6 +193,7 @@ def countdown():
                     socketio.emit('yourturn', currGame['offeredWords'], room = currGame['order'][currGame['currDrawer']])
                 elif currGame['gameState'] == Game.CHOOSING: #Executed when time runs out as a player is choosing a word
                     Game.chooseWord(currGame, None)
+                    socketio.send("<b>It is your turn to draw!</b>", room = currGame['order'][currGame['currDrawer']])
                     currGame['timerTime'] = currGame['maxTime'] #Start drawing
                     socketio.send('<b>You have chosen ' + currGame['currWord'] + '</b>', room = currGame['order'][currGame['currDrawer']])
                     socketio.emit('startDrawing', room = currGame['order'][currGame['currDrawer']])
@@ -204,10 +205,19 @@ def countdown():
 def message(msg, methods=['GET','POST']):
     #print("Message " + msg)
     global currWord # TESTING
+    currGame = games[rooms[request.sid]]
+    currWord = currGame['currWord']
     #currWord = word.randword() # TESTING
     if len(msg) != 0:
-        send(msg, broadcast=True)
-        guess = msg
+        if (request.sid != currGame['order'][currGame['currDrawer']]):
+            guess = msg
+            if guess != currWord:
+                send(msg, broadcast=True)
+            else:
+                send("<b>Correct!!!</b>")
+        else:
+            send("<b>You can't chat during your turn.</b>")
+
         #print(guess == currWord)
         #if guess == currWord:
         #    send("Correct")
