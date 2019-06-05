@@ -23,16 +23,17 @@ Soojin Choi(PM), Emily Lee, Kevin Lin, Angela Tom
 2. ssh into your droplet through a user using `$ ssh <user>@<ip address>`
 3. Go to the directory /var/www through `$ cd /var/www/` 
 4. Clone the repo and name the directory your chosen appname by running `$ sudo git clone <link> <appname>`
-  * The tree of the directory should be:
-      * appname
-         * appname
-         * appname.wsgi
-         * appname.conf
-5. Move the .conf file to the /etc/apache2/sites-enabled directory by running the command `$ sudo mv /var/www/appname/appname.conf /etc/apache2/sites-enabled`
-  * Make sure you also have a <appname>.conf file with the path `/etc/apache2/sites-enabled/<appname>.conf`
-  * Enable your site by running the command `$ sudo a2ensite <appname>`
-6. Go into the first directory named appname and run both `$ sudo chgrp -R www-data <appname>`
-`$ sudo chmod -R g+w <appname>`
+   * The tree of the directory should be:
+      * scribble
+         * scribble
+         * scribble.wsgi
+         * scribble.conf
+5. Move the .conf file to the /etc/apache2/sites-enabled directory by running the command `$ sudo mv /var/www/scribble/scribble.conf /etc/apache2/sites-enabled`
+   * Make sure you also have a scribble.conf file with the path `/etc/apache2/sites-enabled/scribble.conf`
+   * Enable your site by running the command `$ sudo a2ensite <appname>`
+6. Go into the first directory named appname and run both 
+    1. `$ sudo chgrp -R www-data scribble`
+    2. `$ sudo chmod -R g+w scribble`
 7. Install virtualenv by running `$ pip3 install virtualenv`
    * Make a venv by running `$ python3 -m venv VENV_NAME`
    * Activate it by running `$ . ~/path_to_venv/VENV_NAME/bin/activate`
