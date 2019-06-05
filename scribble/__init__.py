@@ -188,6 +188,7 @@ def countdown():
             if currGame['timerTime'] <= -1:
                 print(currGame['gameState'])
                 if currGame['gameState'] == Game.DRAWING: #Executed when time runs out as a player is drawing
+                    guessedCorrectly.remove(request.sid)
                     currGame['timerTime'] = 5 #Time a player has to choose a word
                     socketio.emit('notyourturn', room = currGame['order'][currGame['currDrawer']])
                     Game.nextUser(currGame)
@@ -195,7 +196,7 @@ def countdown():
                 elif currGame['gameState'] == Game.CHOOSING: #Executed when time runs out as a player is choosing a word
                     Game.chooseWord(currGame, None)
                     socketio.send("<b>It is your turn to draw!</b>", room = currGame['order'][currGame['currDrawer']])
-                    guessedCorrectly.remove(request.sid)
+                   
                     currGame['timerTime'] = currGame['maxTime'] #Start drawing
                     socketio.send('<b>You have chosen ' + currGame['currWord'] + '</b>', room = currGame['order'][currGame['currDrawer']])
                     socketio.emit('startDrawing', room = currGame['order'][currGame['currDrawer']])
