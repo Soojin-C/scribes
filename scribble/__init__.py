@@ -222,7 +222,8 @@ def message(msg, methods=['GET','POST']):
             if guess.lower() != currWord:
                 send(msg, broadcast=True)
             else:
-                send(Game.addPoints(currGame, request.sid))
+                Game.addPoints(currGame, request.sid)
+                Game.addPoints(currGame, currGame['order'][currGame['currDrawer']])
                 send("<b>Correct!!!</b>")
                 currGame['guessedCorrectly'].add(request.sid)
         else: 
