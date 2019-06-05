@@ -75,7 +75,7 @@ def auth():
         return redirect(url_for("auth"))
 
     try:
-        global user
+        #global user
         user=request.form['user']
         password=dbu.spass(user)
         if password[0]==request.form['pass']:
@@ -94,6 +94,7 @@ def auth():
 @app.route("/home")
 def home():
     if 'username' in session:
+        user=session['username']
         friends = dbu.sfriend(user)
         for i in range(0,len(friends)):
             friends[i]=friends[i][0]
