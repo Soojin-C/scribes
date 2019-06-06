@@ -86,24 +86,17 @@ def auth():
     str(uuids)
     if dbu.son(uuids):
         return redirect(url_for("auth"))
-
-    try:
-        #global user
-        user=request.form['user']
-        password=dbu.spass(user)
-        if password[0]==request.form['pass']:
-            friends = dbu.sfriend(user)
-            for i in range(0,len(friends)):
-                friends[i]=friends[i][0]
-            uuids=uuid.getnode()
-            str(uuids)
-            #print(uuids)
-            dbu.online(user,uuids)
-            #session['username'] = user
-            return redirect(url_for("home"))
-    except:
-        flash("wrong username or password")
-        return redirect(url_for('login'))
+    #global user
+    user=request.form['user']
+    password=dbu.spass(user)
+    if password[0]==request.form['pass']:
+        friends = dbu.sfriend(user)
+        for i in range(0,len(friends)):
+            friends[i]=friends[i][0]
+        #print(uuids)
+        dbu.online(user,uuids)
+        #session['username'] = user
+        return redirect(url_for("home"))
     flash("wrong username or password")
     return redirect(url_for('login'))
 #    return render_template("index.html", currTime = timerTime)
@@ -131,11 +124,12 @@ def logout():
 
 @app.route("/game", methods=["GET", "POST"])
 def game():
+    isloggedin = False
     uuids=uuid.getnode()
     str(uuids)
     if dbu.son(uuids):
-        return render_template("game2.html")
-    return render_template("game.html")
+        isloggedin = True
+    return render_template("game.html", loggedin = isloggedin)
 
 @socketio.on("joinRoom")
 def joinRoom(roomID):

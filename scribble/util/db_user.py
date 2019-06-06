@@ -27,9 +27,10 @@ def build():
 def suser(username):
     db=sqlite3.connect(DB_FILE)
     c=db.cursor()
-    command="SELECT username FROM users WHERE users.username=(?)"
-    c.execute(command,username)
+    command="SELECT username FROM users WHERE username=?"
+    c.execute(command,(username,))
     output = c.fetchone()
+    print(output)
     db.close()
     return output
 
@@ -39,7 +40,7 @@ def spass(username):
     db=sqlite3.connect(DB_FILE)
     c=db.cursor()
     command="SELECT password FROM users WHERE users.username=(?)"
-    c.execute(command,username)
+    c.execute(command,(username,))
     output = c.fetchone()
     db.close()
     return output
@@ -49,7 +50,7 @@ def sfriend(username):
     db=sqlite3.connect(DB_FILE)
     c=db.cursor()
     command="SELECT friend FROM friends WHERE friends.username=(?)"
-    c.execute(command,username)
+    c.execute(command,(username,))
     output = c.fetchall()
     db.close()
     return output
@@ -69,7 +70,7 @@ def auser(username, password):
     db=sqlite3.connect(DB_FILE)
     c=db.cursor()
     command="INSERT INTO users VALUES(?,?)"
-    c.execute(command,(username, password))
+    c.execute(command,(username, password,))
     db.commit()
     db.close()
 
@@ -85,17 +86,17 @@ def offline(username):
     db=sqlite3.connect(DB_FILE)
     c=db.cursor()
     command="DELETE FROM online WHERE user=(?)"
-    c.execute(command,username)
+    c.execute(command,(username,))
     db.commit()
     db.close()
-    
-    
+
+
 #add friend
 def afriend(username,friend):
     db=sqlite3.connect(DB_FILE)
     c=db.cursor()
     command="INSERT INTO friends VALUES(?,?)"
-    c.execute(command,(username,friend))
+    c.execute(command,(username,friend,))
     db.commit()
     db.close()
 
