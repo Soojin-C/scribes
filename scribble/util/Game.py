@@ -39,13 +39,18 @@ def addUser(game,user): #Adds user to a game
     game['order'].insert(insertPos, user)
 
 def removeUser(game,user):
+    currDrawerRemoved = False
     game['players'].remove(user)
     if game['order'][game['currDrawer']] == user:
         nextUser(game, keepIndex = True)
+        game['timerTime'] = 5
+        game['gameState'] = CHOOSING
+        currDrawerRemoved = True
     elif game['currDrawer'] > game['order'].index(user):
         game['currDrawer'] -= 1
     game['order'].remove(user)
     del game['points'][user]
+    return currDrawerRemoved
 
 def chooseWord(game, index):
     if type(index) != type(1) or index < 0 or index > 2:

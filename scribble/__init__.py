@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, session, url_for, redirect, f
 
 import threading
 import os
+import random, string
 
 from util import db_user as dbu
 from util import Game
@@ -15,6 +16,7 @@ continueTimer = True
 timerTime = 60 #Timer to be displayed
 rooms = {} #request.sid : roomID
 games = {} #roomID : game info dictionary
+names = {} #request.sid : display name
 #guessedCorrectly = set()
 
 
@@ -131,18 +133,28 @@ def joinRoom(roomID):
         Game.addUser(games[roomID],request.sid)
     rooms[request.sid] = roomID #Sets room of user in a dictionary for later use
     emit('joinRoom', roomID)
+    send('<b>' + names[request.sid] + ' has joined the room</b>', broadcast = True, room = roomID)
+
+@socketio.on('connect')
+def userConnect():
+    newName = ''
+    if 'username' in session:
+        newName = session['username']
+    else:
+        newName = 'Guest_' + ''.join(random.sample(string.ascii_lowercase, 8))
+    names[request.sid] = newName
+    print(newName)
 
 @socketio.on('disconnect')
 def disconn(): #Executed when a client disconnects from the server
-    print(request.sid + "Left")
     if request.sid in rooms:
         currGame = games[rooms[request.sid]]
-        Game.removeUser(games[rooms[request.sid]], request.sid)
+        currDrawerRemoved = Game.removeUser(games[rooms[request.sid]], request.sid)
         if len(currGame['players']) == 0: #Deletes game room if no-one is in it
             games.pop(rooms[request.sid])
-        else:
-            currGame['timerTime'] = 5 #Time a player has to choose a word
+        elif currDrawerRemoved:
             socketio.emit('yourturn', currGame['offeredWords'], room = currGame['order'][currGame['currDrawer']])
+        socketio.send('<b>' + names[request.sid] + ' has left the room</b>')
         rooms.pop(request.sid)
 
 @socketio.on('requestLines')
@@ -179,30 +191,32 @@ def countdown():
     global continueTimer, timerTime
     if continueTimer:
         threading.Timer(1, countdown).start()
+        gamesCopy = list(games) #Used because gamesCopy will not be modified as the for loop is executed
         #Execute the following tasks every second
-        gamesCopy = list(games)
         for roomID in gamesCopy:
-            currGame = games[roomID]
-            print(currGame['order'], currGame['currDrawer'], currGame['players'])
-            currGame['timerTime'] -= 1
-            if currGame['timerTime'] <= -1:
-                print(currGame['gameState'])
-                if currGame['gameState'] == Game.DRAWING: #Executed when time runs out as a player is drawing
-                    #guessedCorrectly.remove(request.sid)
-                    currGame['timerTime'] = 5 #Time a player has to choose a word
-                    socketio.emit('notyourturn', room = currGame['order'][currGame['currDrawer']])
-                    Game.nextUser(currGame)
-                    socketio.emit('yourturn', currGame['offeredWords'], room = currGame['order'][currGame['currDrawer']])
-                elif currGame['gameState'] == Game.CHOOSING: #Executed when time runs out as a player is choosing a word
-                    Game.chooseWord(currGame, None)
-                    socketio.send("<b>It is your turn to draw!</b>", room = currGame['order'][currGame['currDrawer']])
-                    currGame['guessedCorrectly'] = set()
-                    currGame['timerTime'] = currGame['maxTime'] #Start drawing
-                    socketio.send('<b>You have chosen ' + currGame['currWord'] + '</b>', room = currGame['order'][currGame['currDrawer']])
-                    socketio.emit('startDrawing', room = currGame['order'][currGame['currDrawer']])
-
-            # print(games[roomID]['timerTime'])
-            socketio.emit('updateTimer', currGame['timerTime'], room = roomID)
+            try:
+                currGame = games[roomID]
+                print(currGame['order'], currGame['currDrawer'], currGame['players'])
+                currGame['timerTime'] -= 1
+                if currGame['timerTime'] <= -1:
+                    print(currGame['gameState'])
+                    if currGame['gameState'] == Game.DRAWING: #Executed when time runs out as a player is drawing
+                        #guessedCorrectly.remove(request.sid)
+                        currGame['timerTime'] = 5 #Time a player has to choose a word
+                        socketio.emit('notyourturn', room = currGame['order'][currGame['currDrawer']])
+                        Game.nextUser(currGame)
+                        socketio.emit('yourturn', currGame['offeredWords'], room = currGame['order'][currGame['currDrawer']])
+                    elif currGame['gameState'] == Game.CHOOSING: #Executed when time runs out as a player is choosing a word
+                        Game.chooseWord(currGame, None)
+                        socketio.send("<b>It is your turn to draw!</b>", room = currGame['order'][currGame['currDrawer']])
+                        currGame['guessedCorrectly'] = set()
+                        currGame['timerTime'] = currGame['maxTime'] #Start drawing
+                        socketio.send('<b>You have chosen ' + currGame['currWord'] + '</b>', room = currGame['order'][currGame['currDrawer']])
+                        socketio.emit('startDrawing', room = currGame['order'][currGame['currDrawer']])
+                # print(games[roomID]['timerTime'])
+                socketio.emit('updateTimer', currGame['timerTime'], room = roomID)
+            except:
+                continue
 
 @socketio.on('message')
 def message(msg, methods=['GET','POST']):
@@ -214,6 +228,7 @@ def message(msg, methods=['GET','POST']):
     currWord = currGame['currWord']
     #currWord = word.randword() # TESTING
     if len(msg) != 0:
+        msg = msg[:200].replace('<','&lt;').replace('>','&gt;') #Caps message length at 200 characters and replaces HTML shenanigans
         if (request.sid != currGame['order'][currGame['currDrawer']]):
             guess = msg
             if request.sid in currGame['guessedCorrectly']:
@@ -226,7 +241,7 @@ def message(msg, methods=['GET','POST']):
                 Game.addPoints(currGame, currGame['order'][currGame['currDrawer']])
                 send("<b>Correct!!!</b>")
                 currGame['guessedCorrectly'].add(request.sid)
-        else: 
+        else:
             send("<b>You can't chat while drawing.</b>")
 
         #print(guess == currWord)
