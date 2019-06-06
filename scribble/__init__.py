@@ -195,8 +195,10 @@ def returnLines(data):
 
 @socketio.on('clearBoard')
 def clearBoard(data):
-    games[rooms[request.sid]]['currLines'] = []
-    # print(currLines)
+    currGame = games[rooms[request.sid]]
+    if (request.sid != currGame['order'][currGame['currDrawer']] or currGame['currWord'] == ''):
+        return
+    currGame['currLines'] = []
     emit('clearBoard', None, broadcast = True, include_self = False, room = rooms[request.sid])
 
 @socketio.on('newLine')

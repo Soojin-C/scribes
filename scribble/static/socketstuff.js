@@ -442,6 +442,12 @@ socket.on('updateTimer', function(newTime) {
   timer.innerHTML = newTime;
 });
 
+clearbtn.addEventListener('click', function(e) {
+  if (isCurrDrawer) {
+    clearBoard();
+  }
+});
+
 canvas.addEventListener('mousedown', function(e) {
   if (isCurrDrawer) {
     if (drawMode == 'pen') {
