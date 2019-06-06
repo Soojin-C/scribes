@@ -345,6 +345,16 @@ var setPaint = function() {
   drawMode = 'fill';
 }
 
+var tintCanvas = function() {
+  var tintHelper = document.getElementById('tintHelper');
+  tintHelper.style.background = 'rgba(0,0,0,.5)';
+}
+
+var untintCanvas = function() {
+  var tintHelper = document.getElementById('tintHelper');
+  tintHelper.style.background = 'rgba(0,0,0,0)';
+}
+
 var addtoScoreboard = function(playerName) {
   var newRow = document.createElement('div');
   newRow.className = 'row';
@@ -359,6 +369,14 @@ var addtoScoreboard = function(playerName) {
   scoreboard.append(newRow);
   scores[playerName] = [scoreDisp, newRow];
 }
+
+socket.on('tint', function() {
+  tintCanvas();
+})
+
+socket.on('untint', function() {
+  untintCanvas();
+})
 
 socket.on('connect', function() { //Executed upon opening the site
   var params = (new URL(document.location)).searchParams;
@@ -386,7 +404,7 @@ socket.on('yourturn', function(data) {
   wordSelection.children[1].innerHTML = data[1];
   wordSelection.children[2].innerHTML = data[2];
   wordSelection.style.display = 'block';
-  console.log(data);
+  tintCanvas();
 });
 
 socket.on('startDrawing', function(data) {

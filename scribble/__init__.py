@@ -222,6 +222,7 @@ def chooseWord(index):
     send('<b>You have chosen ' + currGame['currWord'] + '</b>')
     currGame['currLines'] = []
     emit('clearBoard', None, broadcast = True, room = rooms[request.sid])
+    emit('untint', broadcast = True, room = rooms[request.sid])
 
 def countdown():
     global continueTimer, timerTime
@@ -245,7 +246,8 @@ def countdown():
                         socketio.send('<b>You have chosen ' + currGame['currWord'] + '</b>', room = currGame['order'][currGame['currDrawer']])
                         socketio.emit('startDrawing', room = currGame['order'][currGame['currDrawer']])
                         currGame['currLines'] = []
-                        socketio.emit('clearBoard', None, broadcast = True, room = rooms[request.sid])
+                        socketio.emit('clearBoard', None, room = roomID)
+                        socketio.emit('untint', room = roomID)
                 # print(games[roomID]['timerTime'])
                 socketio.emit('updateTimer', currGame['timerTime'], room = roomID)
             except:
@@ -263,6 +265,7 @@ def nextTurn(currGame, roomID):
     for i in currGame['points'].keys(): #Maps request.sids to the corresponding name before sending
         scoresToSend[names[i]] = currGame['points'][i]
     socketio.emit('updateScores', scoresToSend, room = roomID)
+    socketio.emit('tint', room = roomID)
     currGame['guessedCorrectly'] = set()
 
 @socketio.on('message')

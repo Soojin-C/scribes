@@ -21,12 +21,43 @@
         <div id='timer'>
           {{currTime}}
         </div>
-        <canvas id='drawingCanvas' height="500" width="720" style='border: 1px solid black'></canvas><br>
-        <div id='wordSelection'>
-          Choose your word:
-          <button type="button" class="btn btn-light" onclick='chooseWord(0)'>Word1</button>
-          <button type="button" class="btn btn-light" onclick='chooseWord(1)'>Word2</button>
-          <button type="button" class="btn btn-light" onclick='chooseWord(2)'>Word3</button>
+        <div class='row'>
+          <div class='col'>
+            <figure id='canvasTint'>
+              <div id='tintHelper'></div>
+              <canvas id='drawingCanvas' height="500" width="720" style='border: 1px solid black'></canvas>
+            </figure>
+            <style id='tintstyle'>
+              #canvasTint {
+                height: 500px;
+                position: relative;
+                float: left;
+              }
+
+              #tintHelper {
+                content: '';
+                display: block;
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: rgba(0,0,0,0);
+                transition: .3s linear;
+                pointer-events: none;
+              }
+            </style>
+          </div>
+        </div>
+        <div class='row'>
+          <div class='col'>
+            <div id='wordSelection'>
+              Choose your word:
+              <button type="button" class="btn btn-light" onclick='chooseWord(0)'>Word1</button>
+              <button type="button" class="btn btn-light" onclick='chooseWord(1)'>Word2</button>
+              <button type="button" class="btn btn-light" onclick='chooseWord(2)'>Word3</button>
+            </div>
+          </div>
         </div>
       </div>
       <div class="col-sm-2">
