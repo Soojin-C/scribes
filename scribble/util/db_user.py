@@ -1,9 +1,15 @@
-import sqlite3 ,os
+import sqlite3
+import os
 
-path = os.path.dirname(__file__)
+DIR = os.path.dirname(__file__) or '.'
+DIR += '/../'
 
-DB_FILE="data/login.db"
-DB_FILE = path + "/../" + DB_FILE
+DB_FILE = DIR + "data/login.db"
+
+#path = os.path.dirname(__file__)
+
+#DB_FILE="data/login.db"
+#DB_FILE = path + "/../" + DB_FILE
 #makes users and friends table
 def build():
     db=sqlite3.connect(DB_FILE)
