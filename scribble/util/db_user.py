@@ -18,6 +18,8 @@ def build():
     c.execute(command)
     command="CREATE TABLE IF NOT EXISTS friends(username TEXT, friend TEXT)"
     c.execute(command)
+    command="CREATE TABLE IF NOT EXISTS online(user TEXT, uuid TEXT)"
+    c.execute(command)
     db.commit()
     db.close()
 
@@ -52,6 +54,16 @@ def sfriend(username):
     db.close()
     return output
 
+#search/get friends
+def son(uuid):
+    db=sqlite3.connect(DB_FILE)
+    c=db.cursor()
+    command="SELECT user FROM online WHERE online.uuid=(?)"
+    c.execute(command,(uuid,))
+    output = c.fetchone()
+    db.close()
+    return output
+
 #add user
 def auser(username, password):
     db=sqlite3.connect(DB_FILE)
@@ -61,6 +73,23 @@ def auser(username, password):
     db.commit()
     db.close()
 
+def online(username, uuid):
+    db=sqlite3.connect(DB_FILE)
+    c=db.cursor()
+    command="INSERT INTO online VALUES(?,?)"
+    c.execute(command,(username, uuid,))
+    db.commit()
+    db.close()
+
+def offline(username):
+    db=sqlite3.connect(DB_FILE)
+    c=db.cursor()
+    command="DELETE FROM online WHERE user=(?)"
+    c.execute(command,username)
+    db.commit()
+    db.close()
+    
+    
 #add friend
 def afriend(username,friend):
     db=sqlite3.connect(DB_FILE)
