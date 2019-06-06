@@ -1,6 +1,7 @@
 from flask_socketio import SocketIO, join_room, leave_room, emit, send
 from flask import Flask, render_template, request, session, url_for, redirect, flash
 
+import uuid
 import threading
 import os
 import random, string
@@ -30,25 +31,33 @@ def setup():
 
 @app.route("/")
 def root():
-    if 'username' in session:
+    uuids=uuid.getnode()
+    str(uuids)
+    #print(uuids)
+    if dbu.son(uuids):
         return redirect(url_for("home"))
     return render_template("index.html", currTime = timerTime)
 
 @app.route("/login")
 def login():
-    if 'username' in session:
+    uuids=str(uuid.getnode())
+    if dbu.son(uuids):
         return redirect(url_for("home"))
     return render_template("login.html")
 
 @app.route("/reg")
 def reg():
-    if 'username' in session:
+    uuids=uuid.getnode()
+    str(uuids)
+    if dbu.son(uuids):
         return redirect(url_for("home"))
     return render_template("register.html")
 
 @app.route("/register", methods=["POST","GET"])
 def regis():
-    if 'username' in session:
+    uuids=uuid.getnode()
+    str(uuids)
+    if dbu.son(uuids):
         return redirect(url_for("home"))
     if request.method=="POST":
         user=request.form['user']
@@ -73,7 +82,9 @@ def regis():
 #friends=[]
 @app.route("/auth", methods=['GET','POST'])
 def auth():
-    if 'username' in session:
+    uuids=uuid.getnode()
+    str(uuids)
+    if dbu.son(uuids):
         return redirect(url_for("auth"))
 
     try:
@@ -84,7 +95,11 @@ def auth():
             friends = dbu.sfriend(user)
             for i in range(0,len(friends)):
                 friends[i]=friends[i][0]
-            session['username'] = user
+            uuids=uuid.getnode()
+            str(uuids)
+            #print(uuids)
+            dbu.online(user,uuids)
+            #session['username'] = user
             return redirect(url_for("home"))
     except:
         flash("wrong username or password")
@@ -95,8 +110,10 @@ def auth():
 
 @app.route("/home")
 def home():
-    if 'username' in session:
-        user=session['username']
+    uuids=uuid.getnode()
+    str(uuids)
+    if dbu.son(uuids):
+        user=dbu.son(uuids)[0]
         friends = dbu.sfriend(user)
         for i in range(0,len(friends)):
             friends[i]=friends[i][0]
@@ -105,13 +122,18 @@ def home():
 
 @app.route("/logout")
 def logout():
-    if 'username' in session:
-        session.pop('username')
+    uuids=uuid.getnode()
+    str(uuids)
+    if dbu.son(uuids):
+        user=dbu.son(uuids)[0]
+        dbu.offline(user)
     return redirect(url_for("root"))
 
 @app.route("/game", methods=["GET", "POST"])
 def game():
-    if 'username' in session:
+    uuids=uuid.getnode()
+    str(uuids)
+    if dbu.son(uuids):
         return render_template("game2.html")
     return render_template("game.html")
 
@@ -144,8 +166,10 @@ def joinRoom(roomID):
 @socketio.on('connect')
 def userConnect():
     newName = ''
-    if 'username' in session:
-        newName = session['username']
+    uuids=uuid.getnode()
+    str(uuids)
+    if dbu.son(uuids):
+        newName=dbu.son(uuids)[0]
     else:
         newName = 'Guest_' + ''.join(random.sample(string.ascii_lowercase, 8))
     names[request.sid] = newName
