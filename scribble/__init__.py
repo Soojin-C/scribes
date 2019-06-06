@@ -110,7 +110,7 @@ def home():
         friends = dbu.sfriend(user)
         for i in range(0,len(friends)):
             friends[i]=friends[i][0]
-        return render_template("userprofile.html", currTime = timerTime, username = user, friendlist = friends)
+        return render_template("userprofile.html", currTime = timerTime, username = user, friendlist = friends, loggedin = True)
     return redirect(url_for("root"))
 
 @app.route("/logout")
