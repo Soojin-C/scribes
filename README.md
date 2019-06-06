@@ -29,7 +29,7 @@ Soojin Choi(PM), Emily Lee, Kevin Lin, Angela Tom
          * scribble.wsgi
          * scribble.conf
 5. Move the .conf file to the /etc/apache2/sites-enabled directory by running the command `$ sudo mv /var/www/scribble/scribble.conf /etc/apache2/sites-enabled`
-   * Make sure you also have a scribble.conf file with the path `/etc/apache2/sites-enabled/scribble.conf`
+   * Make sure that the ServerName in scribble.conf is set to your droplet ip.
    * Enable your site by running the command `$ sudo a2ensite <appname>`
 6. Go into the first directory named appname and run both 
     1. `$ sudo chgrp -R www-data scribble`
