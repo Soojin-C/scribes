@@ -72,8 +72,11 @@ def nextUser(game, keepIndex = False):
             return 'Game End'
     print(game['offeredWords'])
 
-def addPoints(game, user):
-    game['points'][user] += 10
+def addPoints(game, user, drawer = False):
+    if drawer:
+        game['points'][user] += game['timerTime'] * 75 // game['maxTime']
+    else:
+        game['points'][user] += game['timerTime'] * 100 // game['maxTime']
     return game['points'][user]
 
 def fillWordPool(game):

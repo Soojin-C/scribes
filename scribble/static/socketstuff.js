@@ -6,13 +6,16 @@ var clearbtn = document.getElementById('clearbtn');
 var paintbtn = document.getElementById('paint');
 var penbtn = document.getElementById('pen');
 var wordSelection = document.getElementById('wordSelection');
+var scoreboard = document.getElementById('scoreboard');
 var isCurrDrawer = false;
 
+var scores = {};
 var isDrawing = false;
 var drawMode = 'pen';
 var prevX = 0;
 var prevY = 0;
 var lineWidth = 3;
+var prevDrawer = null;
 
 wordSelection.style.display = 'none'; // Default no word selection shown
 
@@ -342,6 +345,21 @@ var setPaint = function() {
   drawMode = 'fill';
 }
 
+var addtoScoreboard = function(playerName) {
+  var newRow = document.createElement('div');
+  newRow.className = 'row';
+  var nameDisp = document.createElement('div');
+  nameDisp.className = 'col-sm-8';
+  nameDisp.innerHTML = playerName;
+  var scoreDisp = document.createElement('div');
+  scoreDisp.className = 'col-sm-4';
+  scoreDisp.innerHTML = 0;
+  newRow.appendChild(nameDisp);
+  newRow.appendChild(scoreDisp);
+  scoreboard.append(newRow);
+  scores[playerName] = [scoreDisp, newRow];
+}
+
 socket.on('connect', function() { //Executed upon opening the site
   var params = (new URL(document.location)).searchParams;
   var roomID = params.get('roomID');
@@ -351,6 +369,16 @@ socket.on('connect', function() { //Executed upon opening the site
   socket.emit('joinRoom', roomID); //Join room specified by roomID parameter
   console.log('Successfully Connected to ' + roomID);
   socket.emit('requestLines', null);
+});
+
+socket.on('highlightDrawer', function(drawer) {
+  console.log(drawer + ' is Drawing');
+  if (prevDrawer != null) {
+    scores[prevDrawer][1].className = 'row';
+  }
+  prevDrawer = drawer;
+  console.log(scores);
+  scores[drawer][1].className = 'row border border-primary';
 });
 
 socket.on('yourturn', function(data) {
@@ -387,6 +415,27 @@ socket.on('newLine', function(line) {
 
 socket.on('clearBoard', function(data) {
   clearBoard(sendBack = false);
+});
+
+socket.on('newPlayer', function(playerName) {
+  addtoScoreboard(playerName);
+});
+
+socket.on('playerLeave', function(playerName) {
+  scoreboard.removeChild(scores[playerName][1]);
+  delete scores[playerName];
+});
+
+socket.on('updateScores', function(newScores) {
+  console.log(newScores);
+  var keys = Object.keys(newScores);
+  for (var i = 0; i < keys.length; i++) {
+    var currKey = keys[i];
+    if (!(currKey in scores)) { //Add to scoreboard if the player is not already there
+      addtoScoreboard(currKey);
+    }
+    scores[currKey][0].innerHTML = newScores[currKey];
+  }
 });
 
 socket.on('updateTimer', function(newTime) {

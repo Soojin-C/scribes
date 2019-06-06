@@ -188,7 +188,9 @@ Team ShrimpCrackers:
 - Incorrect information in giving the path name for the .conf
   file and where to enable the .conf file.
 ==============================================================
-kevinL -- 2019-06-06 12:56
+kevinL -- 2019-06-06 15:24
 --------------------------------------------------------------
 - Bug fixes and naming
+- Scoreboard
+- Updated score calculations
 ==============================================================
