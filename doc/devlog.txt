@@ -175,3 +175,16 @@ kevinL -- 2019-06-05 16:26
 --------------------------------------------------------------
 - Paint bucket/pen button and sending paint buckets
 ==============================================================
+soojinC -- 2019-06-06 2:11
+--------------------------------------------------------------
+- readme launch instructions
+Team ShrimpCrackers:
+-> Locally
+- Could not run because launch instructions were out of date.
+  None of the information provided was correct.
+-> Apache2
+- Could not run because many of the instructions were unable
+  to be run
+- Incorrect information in giving the path name for the .conf
+  file and where to enable the .conf file.
+==============================================================
