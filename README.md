@@ -14,8 +14,8 @@ Soojin Choi(PM), Emily Lee, Kevin Lin, Angela Tom
    * Activate it by running `$ . ~/path_to_venv/VENV_NAME/bin/activate`
    * Deactivate it by running `$ deactivate`
 5. Activate your virtual environment
-6. In the root of the directory, run `$ pip install -r requirements.txt`
-7. Now you are ready to run the flask app. Run the command `$ python app.py`. (Make sure your virtual enviornment is actvated)
+6. In the root of the directory, move to the directory named scribble and run `$ pip install -r requirements.txt`
+7. Now you are ready to run the flask app. Run the command `$ python __init__.py`. (Make sure your virtual enviornment is actvated)
 8. Launch the app in your browser (http://127.0.0.1:5000/)
 
 ### Run on Apache2
@@ -28,9 +28,9 @@ Soojin Choi(PM), Emily Lee, Kevin Lin, Angela Tom
          * scribble
          * scribble.wsgi
          * scribble.conf
-5. Move the .conf file to the /etc/apache2/sites-enabled directory by running the command `$ sudo mv /var/www/scribble/scribble.conf /etc/apache2/sites-enabled`
+5. Move the .conf file to the /etc/apache2/sites-enabled directory by running the command `$ sudo mv /var/www/scribble/scribble.conf /etc/apache2/sites-available`
    * Make sure that the ServerName in scribble.conf is set to your droplet ip.
-   * Enable your site by running the command `$ sudo a2ensite <appname>`
+   * Enable your site by running the command `$ sudo a2ensite scribble`
 6. Go into the first directory named appname and run both 
     1. `$ sudo chgrp -R www-data scribble`
     2. `$ sudo chmod -R g+w scribble`
@@ -39,7 +39,7 @@ Soojin Choi(PM), Emily Lee, Kevin Lin, Angela Tom
    * Activate it by running `$ . ~/path_to_venv/VENV_NAME/bin/activate`
    * Deactivate it by running `$ deactivate`
 8. Activate your virtual environment 
-9. Go into the second directory named <appname> and run `$ pip install -r requirements.txt`
+9. Go into the second directory named scribble and run `$ pip install -r requirements.txt`
 10. After running everything above, run `$ sudo service apache2 restart`
    * Run this anytime you make changes as well
 11. Go to your ip address to view your app
