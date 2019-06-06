@@ -27,7 +27,9 @@ def suser(username):
     c=db.cursor()
     command="SELECT username FROM users WHERE users.username=(?)"
     c.execute(command,username)
-    return c.fetchone()
+    output = c.fetchone()
+    db.close()
+    return output
 
 
 #search/get password
@@ -36,7 +38,9 @@ def spass(username):
     c=db.cursor()
     command="SELECT password FROM users WHERE users.username=(?)"
     c.execute(command,username)
-    return c.fetchone()
+    output = c.fetchone()
+    db.close()
+    return output
 
 #search/get friends
 def sfriend(username):
@@ -44,7 +48,9 @@ def sfriend(username):
     c=db.cursor()
     command="SELECT friend FROM friends WHERE friends.username=(?)"
     c.execute(command,username)
-    return c.fetchall()
+    output = c.fetchall()
+    db.close()
+    return output
 
 #add user
 def auser(username, password):
