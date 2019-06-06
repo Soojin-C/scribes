@@ -526,7 +526,8 @@ socket.on("message", function(msg){
   var newMsg = document.createElement('li');
   var children = chatlog.children;
   newMsg.innerHTML = msg;
-  chatlog.appendChild(newMsg)
+  chatlog.appendChild(newMsg);
+  chatlog.scrollTop = chatlog.scrollHeight;
 });
 
 msgbox.addEventListener("keydown", function(e){

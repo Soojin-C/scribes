@@ -49,6 +49,8 @@ def removeUser(game,user):
     elif game['currDrawer'] > game['order'].index(user):
         game['currDrawer'] -= 1
     game['order'].remove(user)
+    if user in game['guessedCorrectly']:
+        game['guessedCorrectly'].remove(user)
     del game['points'][user]
     return currDrawerRemoved
 

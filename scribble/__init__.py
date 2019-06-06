@@ -158,7 +158,7 @@ def disconn(): #Executed when a client disconnects from the server
         currDrawerRemoved = Game.removeUser(games[rooms[request.sid]], request.sid)
         if len(currGame['players']) == 0: #Deletes game room if no-one is in it
             games.pop(rooms[request.sid])
-        elif currDrawerRemoved:
+        elif currDrawerRemoved and len(currGame['order']) > currGame['currDrawer']:
             socketio.emit('yourturn', currGame['offeredWords'], room = currGame['order'][currGame['currDrawer']])
             emit('highlightDrawer', names[currGame['order'][currGame['currDrawer']]], broadcast = True, room = rooms[request.sid])
         socketio.send('<b>' + names[request.sid] + ' has left the room</b>')
@@ -194,6 +194,8 @@ def chooseWord(index):
     currGame['timerTime'] = currGame['maxTime'] #Start drawing
     emit('startDrawing')
     send('<b>You have chosen ' + currGame['currWord'] + '</b>')
+    currGame['currLines'] = []
+    emit('clearBoard', None, broadcast = True, room = rooms[request.sid])
 
 def countdown():
     global continueTimer, timerTime
@@ -209,28 +211,33 @@ def countdown():
                 if currGame['timerTime'] <= -1:
                     # print(currGame['gameState'])
                     if currGame['gameState'] == Game.DRAWING: #Executed when time runs out as a player is drawing
-                        #guessedCorrectly.remove(request.sid)
-                        currGame['timerTime'] = 5 #Time a player has to choose a word
-                        socketio.emit('notyourturn', room = currGame['order'][currGame['currDrawer']])
-                        Game.nextUser(currGame)
-                        socketio.emit('yourturn', currGame['offeredWords'], room = currGame['order'][currGame['currDrawer']])
-                        socketio.emit('highlightDrawer', names[currGame['order'][currGame['currDrawer']]], room = roomID)
-                        scoresToSend = {}
-                        for i in currGame['points'].keys(): #Maps request.sids to the corresponding name before sending
-                            scoresToSend[names[i]] = currGame['points'][i]
-                        socketio.emit('updateScores', scoresToSend, room = roomID)
-                        currGame['guessedCorrectly'] = set()
+                        nextTurn(currGame, roomID)
                     elif currGame['gameState'] == Game.CHOOSING: #Executed when time runs out as a player is choosing a word
                         Game.chooseWord(currGame, None)
-                        socketio.send("<b>It is your turn to draw!</b>", room = currGame['order'][currGame['currDrawer']])
                         currGame['guessedCorrectly'] = set()
                         currGame['timerTime'] = currGame['maxTime'] #Start drawing
                         socketio.send('<b>You have chosen ' + currGame['currWord'] + '</b>', room = currGame['order'][currGame['currDrawer']])
                         socketio.emit('startDrawing', room = currGame['order'][currGame['currDrawer']])
+                        currGame['currLines'] = []
+                        socketio.emit('clearBoard', None, broadcast = True, room = rooms[request.sid])
                 # print(games[roomID]['timerTime'])
                 socketio.emit('updateTimer', currGame['timerTime'], room = roomID)
             except:
                 continue
+
+def nextTurn(currGame, roomID):
+    #guessedCorrectly.remove(request.sid)
+    currGame['timerTime'] = 5 #Time a player has to choose a word
+    socketio.emit('notyourturn', room = currGame['order'][currGame['currDrawer']])
+    Game.nextUser(currGame)
+    socketio.emit('yourturn', currGame['offeredWords'], room = currGame['order'][currGame['currDrawer']])
+    socketio.emit('highlightDrawer', names[currGame['order'][currGame['currDrawer']]], room = roomID)
+    socketio.send("<b>It is your turn to draw!</b>", room = currGame['order'][currGame['currDrawer']])
+    scoresToSend = {}
+    for i in currGame['points'].keys(): #Maps request.sids to the corresponding name before sending
+        scoresToSend[names[i]] = currGame['points'][i]
+    socketio.emit('updateScores', scoresToSend, room = roomID)
+    currGame['guessedCorrectly'] = set()
 
 @socketio.on('message')
 def message(msg, methods=['GET','POST']):
@@ -257,6 +264,8 @@ def message(msg, methods=['GET','POST']):
                 if len(currGame['guessedCorrectly']) == 0:
                     currGame['timerTime'] = currGame['timerTime'] // 2 + 1
                 currGame['guessedCorrectly'].add(request.sid)
+                if len(currGame['guessedCorrectly']) >= len(currGame['players']) - 1: #Skip turn if everyone has guessed correctly
+                    nextTurn(currGame, rooms[request.sid])
         else:
             send("<b>You can't chat while drawing.</b>")
 
