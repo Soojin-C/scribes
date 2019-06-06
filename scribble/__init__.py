@@ -128,7 +128,16 @@ def game():
     uuids=uuid.getnode()
     str(uuids)
     if dbu.son(uuids):
+        user=dbu.son(uuids)[0]
         isloggedin = True
+    roomID = request.args['roomID'] if 'roomID' in request.args else 'Default';
+    currGameNames = set()
+    if roomID in games:
+        for i in games[roomID]['players']:
+            currGameNames.add(names[i])
+        if user in currGameNames:
+            flash('Already in this game!')
+            return redirect(url_for('home'))
     return render_template("game.html", loggedin = isloggedin)
 
 @socketio.on("joinRoom")
@@ -141,12 +150,12 @@ def joinRoom(roomID):
         leave_room(rooms[request.sid])
         if len(games[rooms[request.sid]]['players']) == 0: #Deletes game room if no-one is in it
             games.remove(rooms[request.sid])
-    join_room(roomID) #Places user in a room
     if roomID not in games: #Create new game
         games[roomID] = Game.newGame(request.sid)
         emit('yourturn', games[roomID]['offeredWords'])
     else:
         Game.addUser(games[roomID],request.sid)
+    join_room(roomID) #Places user in a room
     rooms[request.sid] = roomID #Sets room of user in a dictionary for later use
     emit('joinRoom', roomID)
     emit('newPlayer', names[request.sid], broadcast = True, include_self = False, room = roomID)
