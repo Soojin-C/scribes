@@ -196,6 +196,18 @@ kevinL -- 2019-06-06 18:22
 - Board clear between rounds
 - Canvas tinting on word selection
 ==============================================================
+soojinC -- 2019-06-07 20:03
+--------------------------------------------------------------
+- readme launch instructions
+Team SubtleAsianCoders:
+-> Apache2
+- Unable to run even though none of the instrutions failed.
+  Missing a step to clarify why the app did not appear.
+==============================================================
+emilyL -- 2019-06-05 00:51
+--------------------------------------------------------------
+- Adding friends
+==============================================================
 kevinL -- 2019-06-07 01:50
 --------------------------------------------------------------
 - Lobbies

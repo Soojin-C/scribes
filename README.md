@@ -1,8 +1,10 @@
 # Scribbl+ by write_illegibly
 Soojin Choi(PM), Emily Lee, Kevin Lin, Angela Tom
 ## Project Overview
+Scribbl+ is a multiplayer drawing game. For each round, users would be able to guess the word being drawn or draw one of the three words given to them.
 
 ## Necessary Packages
+flask_socketio
 
 ## Launch Instructions
 ### Run on localhost
@@ -21,27 +23,27 @@ Soojin Choi(PM), Emily Lee, Kevin Lin, Angela Tom
 ### Run on Apache2
 1. Copy the https link under Clone and download
 2. ssh into your droplet through a user using `$ ssh <user>@<ip address>`
-3. Go to the directory /var/www through `$ cd /var/www/` 
-4. Clone the repo and name the directory your chosen appname by running 
+3. Go to the directory /var/www through `$ cd /var/www/`
+4. Clone the repo and name the directory your chosen appname by running
   `$ sudo git clone https://github.com/Soojin-C/write_illegibly.git scribble`
    * The tree of the directory should be:
       * scribble
          * scribble
          * scribble.wsgi
          * scribble.conf
-5. Move the .conf file to the /etc/apache2/sites-available directory by running the command 
+5. Move the .conf file to the /etc/apache2/sites-available directory by running the command
 `$ sudo mv /var/www/scribble/scribble.conf /etc/apache2/sites-available`
    * Make sure that the ServerName in scribble.conf is set to your droplet ip.
    * Make sure there are no other .conf files with the same ip as the one you place into scribble.conf
    * Enable your site by running the command `$ sudo a2ensite scribble`
-6. Go into the first directory named scribble and run both 
+6. Go into the first directory named scribble and run both
     1. `$ sudo chgrp -R www-data scribble`
     2. `$ sudo chmod -R g+w scribble`
 7. Install virtualenv by running `$ pip3 install virtualenv`
    * Make a venv by running `$ python3 -m venv VENV_NAME`
    * Activate it by running `$ . ~/path_to_venv/VENV_NAME/bin/activate`
    * Deactivate it by running `$ deactivate`
-8. Activate your virtual environment 
+8. Activate your virtual environment
 9. Go into the second directory named scribble and run `$ pip install -r requirements.txt`
 10. After running everything above, run `$ sudo service apache2 restart`
    * Run this anytime you make changes as well
