@@ -2,6 +2,7 @@ var canvas = document.getElementById('drawingCanvas');
 var ctx = canvas.getContext('2d');
 var clearbtn = document.getElementById('clearbtn');
 var finishbtn = document.getElementById('finishbtn');
+var pictext = document.getElementById('pic');
 
 var isDrawing = false;
 var prevX = 0;
@@ -62,6 +63,7 @@ canvas.addEventListener('mouseup', function(e) {
 
 var finishdrawing = function(e) {
   var picurl = canvas.toDataURL();
+  pictext.value = picurl;
   return picurl;
 };
 
