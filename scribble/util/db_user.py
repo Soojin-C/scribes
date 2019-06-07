@@ -20,6 +20,28 @@ def build():
     c.execute(command)
     command="CREATE TABLE IF NOT EXISTS game(user TEXT, game TEXT)"
     c.execute(command)
+    command="CREATE TABLE IF NOT EXISTS profile(user TEXT, pic TEXT)"
+    c.execute(command)
+    db.commit()
+    db.close()
+
+#search/get profile pictures
+def spic(username):
+    db=sqlite3.connect(DB_FILE)
+    c=db.cursor()
+    command="SELECT username FROM profile WHERE username=?"
+    c.execute(command,(username,))
+    output = c.fetchone()
+    print(output)
+    db.close()
+    return output
+
+#add profile pictures
+def apic(username,picurl):
+    db=sqlite3.connect(DB_FILE)
+    c=db.cursor()
+    command="INSERT INTO profile VALUES(?,?)"
+    c.execute(command,(username,picurl,))
     db.commit()
     db.close()
 

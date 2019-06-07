@@ -67,7 +67,7 @@ var finishdrawing = function(e) {
 
 finishbtn.addEventListener('click', function(e){
   isDrawing = false;
-  //finishdrawing();
+  finishdrawing();
   console.log(finishdrawing());
 });
 

@@ -143,6 +143,14 @@ def game():
             return redirect(url_for('home'))
     return render_template("game.html", loggedin = isloggedin)
 
+@app.route("/save", methods=["GET", "POST"])
+def savepic():
+    if 'username' not in session:
+        return redirect(url_for("root"))
+    picurl = request.args['pic']
+    dbu.apic(session['username'])
+    flash("Saved new profile picture")
+
 @socketio.on('joinLobby', namespace='/lobby')
 def joinLobby(lobbyID):
     print(lobbyID + " Recieved")
@@ -393,7 +401,6 @@ def message(msg, methods=['GET','POST']):
         #print(guess == currWord)
         #if guess == currWord:
         #    send("Correct")
-
 
 #@socketio.on("eventName")
 #def fxn(data):
