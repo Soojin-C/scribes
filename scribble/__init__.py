@@ -145,8 +145,6 @@ def game():
 
 @app.route("/save", methods=["GET", "POST"])
 def savepic():
-    if 'username' not in session:
-        return redirect(url_for("root"))
     picurl = request.args['pic']
     dbu.apic(session['username'])
     flash("Saved new profile picture")
