@@ -145,9 +145,13 @@ def game():
 
 @app.route("/save", methods=["GET", "POST"])
 def savepic():
-    picurl = request.args['pic']
-    dbu.apic(session['username'])
+    print("==========")
+    print(request.args)
+    print(request.form)
+    picurl = request.form['pic']
+    dbu.apic(session['username'], picurl)
     flash("Saved new profile picture")
+    return render_template("userprofile.html", loggedin = True)
 
 @socketio.on('joinLobby', namespace='/lobby')
 def joinLobby(lobbyID):

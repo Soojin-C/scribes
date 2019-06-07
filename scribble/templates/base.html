@@ -32,19 +32,9 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <div class="navbar-nav">
-          {% if type == home %}
             <a class="nav-item nav-link active" href="/game"> Game </a>
-            <a class="nav-item nav-link" href="/login?type=login"> Login </a>
-            <a class="nav-item nav-link" href="/reg?type=reg"> Register </a>
-          {% elif type == login %}
-            <a class="nav-item nav-link" href="/game"> Game </a>
             <a class="nav-item nav-link active" href="/login?type=login"> Login </a>
-            <a class="nav-item nav-link" href="/reg?type=reg"> Register </a>
-          {% else %}
-            <a class="nav-item nav-link" href="/game"> Game </a>
-            <a class="nav-item nav-link" href="/login?type=login"> Login </a>
             <a class="nav-item nav-link active" href="/reg?type=reg"> Register </a>
-          {% endif %}
         </div>
       </div>
     </nav>
