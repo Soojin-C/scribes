@@ -1,4 +1,4 @@
-# Scribbl+ by write_illegibly
+# Scribble by write_illegibly
 Soojin Choi(PM), Emily Lee, Kevin Lin, Angela Tom
 ## Project Overview
 Scribbl+ is a multiplayer drawing game. For each round, users would be able to guess the word being drawn or draw one of the three words given to them.
