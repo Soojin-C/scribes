@@ -33,7 +33,6 @@ def setup():
 def root():
     uuids=uuid.getnode()
     str(uuids)
-    #print(uuids)
     if dbu.son(uuids):
         return redirect(url_for("home"))
     return render_template("index.html", currTime = timerTime)
@@ -125,6 +124,7 @@ def logout():
 @app.route("/game", methods=["GET", "POST"])
 def game():
     isloggedin = False
+    user = None
     uuids=uuid.getnode()
     str(uuids)
     if dbu.son(uuids):
@@ -132,7 +132,7 @@ def game():
         isloggedin = True
     roomID = request.args['roomID'] if 'roomID' in request.args else 'Default';
     currGameNames = set()
-    if roomID in games:
+    if roomID in games and user != None:
         for i in games[roomID]['players']:
             currGameNames.add(names[i])
         if user in currGameNames:
