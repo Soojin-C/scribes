@@ -3,8 +3,8 @@ var timer = document.getElementById('timer');
 var canvas = document.getElementById('drawingCanvas');
 var ctx = canvas.getContext('2d');
 var clearbtn = document.getElementById('clearbtn');
-var paintbtn = document.getElementById('paint');
-var penbtn = document.getElementById('pen');
+var paintbtn = document.getElementById('paintbtn');
+var penbtn = document.getElementById('penbtn');
 var wordSelection = document.getElementById('wordSelection');
 var scoreboard = document.getElementById('scoreboard');
 var isCurrDrawer = false;
@@ -559,6 +559,18 @@ msgbox.addEventListener("keydown", function(e){
     e.preventDefault();
     sendMessage();
   }
+});
+
+penbtn.addEventListener('click', function(e) {
+  setPen();
+  penbtn.style.opacity = 1;
+  paintbtn.style.opacity = .5;
+});
+
+paintbtn.addEventListener('click', function(e) {
+  setPaint();
+  penbtn.style.opacity = .5;
+  paintbtn.style.opacity = 1;
 });
 
 var sendbutton = document.getElementById("send");

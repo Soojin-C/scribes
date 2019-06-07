@@ -223,13 +223,13 @@ def joinRoom(roomID):
             return
         leave_room(rooms[request.sid])
         if len(games[rooms[request.sid]]['players']) == 0: #Deletes game room if no-one is in it
-            games.remove(rooms[request.sid])
+            games.pop(rooms[request.sid])
     if roomID not in games: #Create new game
         if roomID in savedgameinfo:
             games[roomID] = Game.newGame(request.sid, maxTime = savedgameinfo[roomID]['maxTime'], maxRounds = savedgameinfo[roomID]['maxRounds'])
+            savedgameinfo.pop(roomID)
         else:
             games[roomID] = Game.newGame(request.sid)
-        savedgameinfo.pop(roomID)
         emit('yourturn', games[roomID]['offeredWords'])
     else:
         Game.addUser(games[roomID],request.sid)
@@ -268,7 +268,7 @@ def disconn(): #Executed when a client disconnects from the server
             emit('highlightDrawer', names[currGame['order'][currGame['currDrawer']]], broadcast = True, room = rooms[request.sid])
         socketio.send('<b>' + names[request.sid] + ' has left the room</b>')
         emit('playerLeave', names[request.sid], broadcast = True, room = rooms[request.sid])
-        rooms.remove(request.sid)
+        rooms.pop(request.sid)
     elif request.sid in lobbyrooms:
         currLobby = lobbies[lobbyrooms[request.sid]]
         currLobby.remove(request.sid)
@@ -291,7 +291,8 @@ def disconn(): #Executed when a client disconnects from the server
 
 @socketio.on('requestLines')
 def returnLines(data):
-    emit('recieveLines', games[rooms[request.sid]]['currLines'])
+    if request.sid in rooms:
+        emit('recieveLines', games[rooms[request.sid]]['currLines'])
 
 @socketio.on('clearBoard')
 def clearBoard(data):

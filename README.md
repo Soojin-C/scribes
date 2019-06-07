@@ -22,16 +22,19 @@ Soojin Choi(PM), Emily Lee, Kevin Lin, Angela Tom
 1. Copy the https link under Clone and download
 2. ssh into your droplet through a user using `$ ssh <user>@<ip address>`
 3. Go to the directory /var/www through `$ cd /var/www/` 
-4. Clone the repo and name the directory your chosen appname by running `$ sudo git clone <link> <appname>`
+4. Clone the repo and name the directory your chosen appname by running 
+  `$ sudo git clone https://github.com/Soojin-C/write_illegibly.git scribble`
    * The tree of the directory should be:
       * scribble
          * scribble
          * scribble.wsgi
          * scribble.conf
-5. Move the .conf file to the /etc/apache2/sites-enabled directory by running the command `$ sudo mv /var/www/scribble/scribble.conf /etc/apache2/sites-available`
+5. Move the .conf file to the /etc/apache2/sites-available directory by running the command 
+`$ sudo mv /var/www/scribble/scribble.conf /etc/apache2/sites-available`
    * Make sure that the ServerName in scribble.conf is set to your droplet ip.
+   * Make sure there are no other .conf files with the same ip as the one you place into scribble.conf
    * Enable your site by running the command `$ sudo a2ensite scribble`
-6. Go into the first directory named appname and run both 
+6. Go into the first directory named scribble and run both 
     1. `$ sudo chgrp -R www-data scribble`
     2. `$ sudo chmod -R g+w scribble`
 7. Install virtualenv by running `$ pip3 install virtualenv`
