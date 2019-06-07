@@ -17,7 +17,11 @@ continueTimer = True
 timerTime = 60 #Timer to be displayed
 rooms = {} #request.sid : roomID
 games = {} #roomID : game info dictionary
+lobbyrooms = {} #request.sid : lobbyID
+lobbies = {} #lobbyID : player set
+lobbyLeaders = {} #lobbyID : request.sid
 names = {} #request.sid : display name
+savedgameinfo = {} #roomID : {'maxTime' : maxTime, 'maxRounds' : numRounds}
 #guessedCorrectly = set()
 
 #"uuids" = not uuids, but ip
@@ -110,23 +114,76 @@ def logout():
         session.pop('username')
     return redirect(url_for("root"))
 
+@app.route("/lobby", methods=['GET', 'POST'])
+def lobby():
+    isloggedin = False
+    if 'username' in session:
+        isloggedin = True
+    roomID = request.args['roomID'] if 'roomID' in request.args else 'Default';
+    return render_template('lobby.html', loggedin = isloggedin)
+
 @app.route("/game", methods=["GET", "POST"])
 def game():
     isloggedin = False
     user = None
-
     if 'username' in session:
         user=session['username']
         isloggedin = True
     roomID = request.args['roomID'] if 'roomID' in request.args else 'Default';
-    currGameNames = set()
-    if roomID in games and isloggedin:
+    print(savedgameinfo)
+    if roomID not in games and roomID not in savedgameinfo:
+        return redirect(url_for('lobby', roomID = request.args['roomID']))
+    elif roomID in games and isloggedin:
+        currGameNames = set()
         for i in games[roomID]['players']:
             currGameNames.add(names[i])
         if user in currGameNames:
             flash('Already in this game!')
             return redirect(url_for('home'))
     return render_template("game.html", loggedin = isloggedin)
+
+@socketio.on('joinLobby', namespace='/lobby')
+def joinLobby(lobbyID):
+    print(lobbyID + " Recieved")
+    if len(lobbyID) == 0:
+        return
+    if request.sid in lobbyrooms: #Checks if the user is already in a room
+        if lobbyrooms[request.sid] == roomID:
+            return
+        leave_room(lobbyrooms[request.sid])
+        if len(lobbies[lobbyrooms[request.sid]]) == 0: #Deletes lobby if no-one is in it
+            lobbies.pop(lobbyrooms[request.sid])
+    if lobbyID not in lobbies: #Create new lobby
+        lobbies[lobbyID] = {request.sid}
+        lobbyLeaders[lobbyID] = request.sid
+    else:
+        lobbies[lobbyID].add(request.sid)
+    join_room(lobbyID) #Places user in a room
+    lobbyrooms[request.sid] = lobbyID #Sets room of user in a dictionary for later use
+    namesToSend = []
+    for i in lobbies[lobbyID]: #Maps request.sids to the corresponding name before sending
+        namesToSend.append(names[i])
+    emit('updateRoster', namesToSend)
+    emit('newLeader', names[lobbyLeaders[lobbyID]], room = lobbyrooms[request.sid])
+    emit('newPlayer', names[request.sid], broadcast = True, include_self = False, room = lobbyID)
+
+@socketio.on('createGame', namespace = '/lobby')
+def createGame(gameInfo):
+    if lobbyLeaders[lobbyrooms[request.sid]] != request.sid:
+        return
+    maxRounds = gameInfo['numRounds']
+    maxTime = gameInfo['maxTime']
+    try: #In case users try to submit invalid options
+        maxRounds = int(maxRounds)
+    except:
+        maxRounds = 3
+    try:
+        maxTime = int(maxTime)
+    except:
+        maxTime = 80
+    print(lobbyrooms)
+    savedgameinfo[lobbyrooms[request.sid]] = {'maxRounds': maxRounds, 'maxTime': maxTime}
+    emit('gameCreated', broadcast = True, room = lobbyrooms[request.sid])
 
 @socketio.on("joinRoom")
 def joinRoom(roomID):
@@ -139,7 +196,11 @@ def joinRoom(roomID):
         if len(games[rooms[request.sid]]['players']) == 0: #Deletes game room if no-one is in it
             games.remove(rooms[request.sid])
     if roomID not in games: #Create new game
-        games[roomID] = Game.newGame(request.sid)
+        if roomID in savedgameinfo:
+            games[roomID] = Game.newGame(request.sid, maxTime = savedgameinfo[roomID]['maxTime'], maxRounds = savedgameinfo[roomID]['maxRounds'])
+        else:
+            games[roomID] = Game.newGame(request.sid)
+        savedgameinfo.pop(roomID)
         emit('yourturn', games[roomID]['offeredWords'])
     else:
         Game.addUser(games[roomID],request.sid)
@@ -176,7 +237,26 @@ def disconn(): #Executed when a client disconnects from the server
             emit('highlightDrawer', names[currGame['order'][currGame['currDrawer']]], broadcast = True, room = rooms[request.sid])
         socketio.send('<b>' + names[request.sid] + ' has left the room</b>')
         emit('playerLeave', names[request.sid], broadcast = True, room = rooms[request.sid])
-        rooms.pop(request.sid)
+        rooms.remove(request.sid)
+    elif request.sid in lobbyrooms:
+        currLobby = lobbies[lobbyrooms[request.sid]]
+        currLobby.remove(request.sid)
+        if len(currLobby) == 0:
+            lobbies.pop(lobbyrooms[request.sid])
+        else:
+            emit('playerLeave', names[request.sid], broadcast = True, room = lobbyrooms[request.sid], namespace='/lobby')
+            if request.sid == lobbyLeaders[lobbyrooms[request.sid]]:
+                lobbyLeaders[lobbyrooms[request.sid]] = random.sample(currLobby,1)[0]
+                emit('newLeader', names[lobbyLeaders[lobbyrooms[request.sid]]], broadcast = True, room = lobbyrooms[request.sid], namespace='/lobby')
+
+# @socketio.on('disconnect', namespace='/lobby')
+# def disconnLobby(): #Executed when a user disconnects from a lobby
+#     if request.sid in lobbyrooms:
+#         currLobby = lobbies[lobbyrooms[request.sid]]
+#         lobbies.remove(request.sid)
+#         if len(currLobby) == 0:
+#             lobbies.remove(lobbyrooms[request.sid])
+#         emit('playerLeave', names[request.sid], broadcast = True, room = lobbyrooms[request.sid])
 
 @socketio.on('requestLines')
 def returnLines(data):
@@ -274,7 +354,7 @@ def message(msg, methods=['GET','POST']):
                 send("You can't guess again.")
                 return
             if guess.lower() != currWord:
-                send(msg, broadcast=True)
+                send("<b>" + names[request.sid] + ":</b> " + msg, broadcast=True)
             else:
                 Game.addPoints(currGame, request.sid) #Add points to guesser
                 Game.addPoints(currGame, currGame['order'][currGame['currDrawer']], drawer = True) #Add points to drawer
