@@ -31,30 +31,25 @@ def setup():
 
 @app.route("/")
 def root():
-    uuids=urllib.request.urlopen('https://ident.me').read().decode('utf8')
-    #print(uuids)
-    if dbu.son(uuids):
+    if 'username' in session:
         return redirect(url_for("home"))
     return render_template("index.html", currTime = timerTime)
 
 @app.route("/login")
 def login():
-    uuids=urllib.request.urlopen('https://ident.me').read().decode('utf8')
-    if dbu.son(uuids):
+    if 'username' in session:
         return redirect(url_for("home"))
     return render_template("login.html")
 
 @app.route("/reg")
 def reg():
-    uuids=urllib.request.urlopen('https://ident.me').read().decode('utf8')
-    if dbu.son(uuids):
+    if 'username' in session:
         return redirect(url_for("home"))
     return render_template("register.html")
 
 @app.route("/register", methods=["POST","GET"])
 def regis():
-    uuids=urllib.request.urlopen('https://ident.me').read().decode('utf8')
-    if dbu.son(uuids):
+    if 'username' in session:
         return redirect(url_for("home"))
     if request.method=="POST":
         user=request.form['user']
@@ -79,8 +74,8 @@ def regis():
 #friends=[]
 @app.route("/auth", methods=['GET','POST'])
 def auth():
-    uuids=urllib.request.urlopen('https://ident.me').read().decode('utf8')
-    if dbu.son(uuids):
+
+    if 'username' in session:
         return redirect(url_for("auth"))
     #global user
     user=request.form['user']
@@ -90,9 +85,8 @@ def auth():
         for i in range(0,len(friends)):
             friends[i]=friends[i][0]
         #print(uuids)
-        uuids=urllib.request.urlopen('https://ident.me').read().decode('utf8')
-        dbu.online(user,uuids)
-        #session['username'] = user
+
+        session['username'] = user
         return redirect(url_for("home"))
     flash("wrong username or password")
     return redirect(url_for('login'))
@@ -100,9 +94,9 @@ def auth():
 
 @app.route("/home")
 def home():
-    uuids=urllib.request.urlopen('https://ident.me').read().decode('utf8')
-    if dbu.son(uuids):
-        user=dbu.son(uuids)[0]
+
+    if 'username' in session:
+        user=session['username']
         friends = dbu.sfriend(user)
         for i in range(0,len(friends)):
             friends[i]=friends[i][0]
@@ -111,19 +105,18 @@ def home():
 
 @app.route("/logout")
 def logout():
-    uuids=urllib.request.urlopen('https://ident.me').read().decode('utf8')
-    if dbu.son(uuids):
-        user=dbu.son(uuids)[0]
-        dbu.offline(user)
+
+    if 'username' in session:
+        session.pop('username')
     return redirect(url_for("root"))
 
 @app.route("/game", methods=["GET", "POST"])
 def game():
     isloggedin = False
     user = None
-    uuids=urllib.request.urlopen('https://ident.me').read().decode('utf8')
-    if dbu.son(uuids):
-        user=dbu.son(uuids)[0]
+
+    if 'username' in session:
+        user=session['username']
         isloggedin = True
     roomID = request.args['roomID'] if 'roomID' in request.args else 'Default';
     currGameNames = set()
@@ -164,10 +157,8 @@ def joinRoom(roomID):
 @socketio.on('connect')
 def userConnect():
     newName = ''
-    hostname = socket.gethostname()
-    uuids = str(socket.gethostbyname(hostname))
-    if dbu.son(uuids):
-        newName=dbu.son(uuids)[0]
+    if 'username' in session:
+        newName=session['username']
     else:
         newName = 'Guest_' + ''.join(random.sample(string.ascii_lowercase, 8))
     names[request.sid] = newName
