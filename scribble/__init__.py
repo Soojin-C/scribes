@@ -1,10 +1,10 @@
 from flask_socketio import SocketIO, join_room, leave_room, emit, send
 from flask import Flask, render_template, request, session, url_for, redirect, flash
 
-import socket
 import threading
 import os
 import random, string
+import urllib
 
 from util import db_user as dbu
 from util import Game
@@ -20,7 +20,7 @@ games = {} #roomID : game info dictionary
 names = {} #request.sid : display name
 #guessedCorrectly = set()
 
-
+#"uuids" = not uuids, but ip
 @app.before_first_request #Executed upon startup
 def setup():
     try:
@@ -31,8 +31,7 @@ def setup():
 
 @app.route("/")
 def root():
-    hostname = socket.gethostname()
-    uuids = str(socket.gethostbyname(hostname))
+    uuids=urllib.request.urlopen('https://ident.me').read().decode('utf8')
     #print(uuids)
     if dbu.son(uuids):
         return redirect(url_for("home"))
@@ -40,24 +39,21 @@ def root():
 
 @app.route("/login")
 def login():
-    hostname = socket.gethostname()
-    uuids = str(socket.gethostbyname(hostname))
+    uuids=urllib.request.urlopen('https://ident.me').read().decode('utf8')
     if dbu.son(uuids):
         return redirect(url_for("home"))
     return render_template("login.html")
 
 @app.route("/reg")
 def reg():
-    hostname = socket.gethostname()
-    uuids = str(socket.gethostbyname(hostname))
+    uuids=urllib.request.urlopen('https://ident.me').read().decode('utf8')
     if dbu.son(uuids):
         return redirect(url_for("home"))
     return render_template("register.html")
 
 @app.route("/register", methods=["POST","GET"])
 def regis():
-    hostname = socket.gethostname()
-    uuids = str(socket.gethostbyname(hostname))
+    uuids=urllib.request.urlopen('https://ident.me').read().decode('utf8')
     if dbu.son(uuids):
         return redirect(url_for("home"))
     if request.method=="POST":
@@ -83,8 +79,7 @@ def regis():
 #friends=[]
 @app.route("/auth", methods=['GET','POST'])
 def auth():
-    hostname = socket.gethostname()
-    uuids = str(socket.gethostbyname(hostname))
+    uuids=urllib.request.urlopen('https://ident.me').read().decode('utf8')
     if dbu.son(uuids):
         return redirect(url_for("auth"))
     #global user
@@ -95,8 +90,7 @@ def auth():
         for i in range(0,len(friends)):
             friends[i]=friends[i][0]
         #print(uuids)
-        hostname = socket.gethostname()
-        uuids = str(socket.gethostbyname(hostname))
+        uuids=urllib.request.urlopen('https://ident.me').read().decode('utf8')
         dbu.online(user,uuids)
         #session['username'] = user
         return redirect(url_for("home"))
@@ -106,8 +100,7 @@ def auth():
 
 @app.route("/home")
 def home():
-    hostname = socket.gethostname()
-    uuids = str(socket.gethostbyname(hostname))
+    uuids=urllib.request.urlopen('https://ident.me').read().decode('utf8')
     if dbu.son(uuids):
         user=dbu.son(uuids)[0]
         friends = dbu.sfriend(user)
@@ -118,8 +111,7 @@ def home():
 
 @app.route("/logout")
 def logout():
-    hostname = socket.gethostname()
-    uuids = str(socket.gethostbyname(hostname))
+    uuids=urllib.request.urlopen('https://ident.me').read().decode('utf8')
     if dbu.son(uuids):
         user=dbu.son(uuids)[0]
         dbu.offline(user)
@@ -129,8 +121,7 @@ def logout():
 def game():
     isloggedin = False
     user = None
-    hostname = socket.gethostname()
-    uuids = str(socket.gethostbyname(hostname))
+    uuids=urllib.request.urlopen('https://ident.me').read().decode('utf8')
     if dbu.son(uuids):
         user=dbu.son(uuids)[0]
         isloggedin = True
