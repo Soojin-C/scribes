@@ -6,4 +6,4 @@ sys.path.insert(0,"/var/www/scribble/scribble/")
 import logging
 logging.basicConfig(stream=sys.stderr)
 
-from <appname> import app as application
+from scribble import app as application
