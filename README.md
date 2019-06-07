@@ -5,6 +5,10 @@ Scribbl+ is a multiplayer drawing game. For each round, users would be able to g
 
 ## Necessary Packages
 flask_socketio
+* Allows our app to run using the features of web sockets
+* Real time gameplay between the members of the app
+To Install:
+* `pip install flask_socketio`  
 
 ## Launch Instructions
 ### Run on localhost

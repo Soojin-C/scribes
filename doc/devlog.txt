@@ -217,3 +217,11 @@ kevinL -- 2019-06-07 01:50
 angelaT -- 2019-06-07 02:29
 --------------------------------------------------------------
 - profile pics (saving, listing)
+==============================================================
+soojinC -- 2019-06-07 06:03
+--------------------------------------------------------------
+-> design doc changes:
+  - Changes all diagrams to align with the current outline
+  - Edits to the component list to match with the current
+    features of the app
+==============================================================
