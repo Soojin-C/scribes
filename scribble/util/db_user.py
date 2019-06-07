@@ -55,7 +55,7 @@ def sfriend(username):
     db.close()
     return output
 
-#search/get friends
+#Check online
 def son(uuid):
     db=sqlite3.connect(DB_FILE)
     c=db.cursor()
