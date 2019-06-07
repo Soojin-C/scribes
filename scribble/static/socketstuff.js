@@ -419,7 +419,11 @@ socket.on('notyourturn', function(data) {
 socket.on('recieveLines', function(lines) {
   for (var i = 0; i < lines.length; i += 1) {
     currLine = lines[i];
-    drawLine(currLine[0], currLine[1], currLine[2], currLine[3], currLine[5], sendBack = false, inputWidth = currLine[4]);
+    if (currLine[0] == 'p') {
+      fill(currLine[1], currLine[2], currLine[3], sendBack = false);
+    } else {
+      drawLine(currLine[0], currLine[1], currLine[2], currLine[3], currLine[5], sendBack = false, inputWidth = currLine[4]);
+    }
   }
 });
 
@@ -427,8 +431,9 @@ socket.on('newLine', function(line) {
   console.log(line);
   if (line[0] == 'p') {
     fill(line[1], line[2], line[3], sendBack = false);
+  } else {
+    drawLine(line[0], line[1], line[2], line[3], line[5], sendBack = false, inputWidth = line[4]);
   }
-  drawLine(line[0], line[1], line[2], line[3], line[5], sendBack = false, inputWidth = line[4]);
 });
 
 socket.on('clearBoard', function(data) {
