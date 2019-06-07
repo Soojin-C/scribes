@@ -104,6 +104,7 @@ def home():
         friends = dbu.sfriend(user)
         for i in range(0,len(friends)):
             friends[i]=friends[i][0]
+            friends[i]
         return render_template("userprofile.html", currTime = timerTime, username = user, friendlist = friends, loggedin = True)
     return redirect(url_for("root"))
 
@@ -185,6 +186,26 @@ def createGame(gameInfo):
     savedgameinfo[lobbyrooms[request.sid]] = {'maxRounds': maxRounds, 'maxTime': maxTime}
     emit('gameCreated', broadcast = True, room = lobbyrooms[request.sid])
 
+@app.route("/friends",methods=["GET","POST"])
+def friends():
+    if 'username' not in session:
+        return redirect(url_for("root"))
+    fri=request.args['friend']
+    if fri==session['username']:
+        flash("can't add yourself")
+    elif dbu.suser(fri):
+        frie=dbu.sfriend(session['username'])
+        for i in range(0,len(frie)):
+            frie[i]=frie[i][0]
+        if fri in frie:
+            flash("already on friend's list")
+        else:
+            dbu.afriend(session['username'],fri)
+            flash(fri+" dded")
+    else:
+        flash("user does not exist")
+    return redirect(url_for("home"))
+
 @socketio.on("joinRoom")
 def joinRoom(roomID):
     if len(roomID) == 0:
@@ -204,6 +225,7 @@ def joinRoom(roomID):
         emit('yourturn', games[roomID]['offeredWords'])
     else:
         Game.addUser(games[roomID],request.sid)
+        #dbu.agame(session['username'],games[roomID])
     join_room(roomID) #Places user in a room
     rooms[request.sid] = roomID #Sets room of user in a dictionary for later use
     emit('joinRoom', roomID)
@@ -229,6 +251,7 @@ def userConnect():
 def disconn(): #Executed when a client disconnects from the server
     if request.sid in rooms:
         currGame = games[rooms[request.sid]]
+        #dbu.rgame(session['username'])
         currDrawerRemoved = Game.removeUser(games[rooms[request.sid]], request.sid)
         if len(currGame['players']) == 0: #Deletes game room if no-one is in it
             games.pop(rooms[request.sid])
