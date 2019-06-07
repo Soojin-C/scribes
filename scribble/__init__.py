@@ -132,7 +132,7 @@ def game():
         isloggedin = True
     roomID = request.args['roomID'] if 'roomID' in request.args else 'Default';
     currGameNames = set()
-    if roomID in games and user != None:
+    if roomID in games and isloggedin:
         for i in games[roomID]['players']:
             currGameNames.add(names[i])
         if user in currGameNames:
