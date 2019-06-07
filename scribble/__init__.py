@@ -105,7 +105,8 @@ def home():
         for i in range(0,len(friends)):
             friends[i]=friends[i][0]
             friends[i]
-        return render_template("userprofile.html", currTime = timerTime, username = user, friendlist = friends, loggedin = True)
+        picurl = dbu.spic(user)
+        return render_template("userprofile.html", currTime = timerTime, username = user, friendlist = friends, loggedin = True, pic=picurl)
     return redirect(url_for("root"))
 
 @app.route("/logout")
@@ -151,7 +152,7 @@ def savepic():
     picurl = request.form['pic']
     dbu.apic(session['username'], picurl)
     flash("Saved new profile picture")
-    return render_template("userprofile.html", loggedin = True)
+    return redirect(url_for("home"))
 
 @socketio.on('joinLobby', namespace='/lobby')
 def joinLobby(lobbyID):
