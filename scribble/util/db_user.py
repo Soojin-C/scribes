@@ -36,7 +36,7 @@ def spic(username):
     db.close()
     return output
 
-#add profile pictures
+#add profile pictures (base64)
 def apic(username,picurl):
     db=sqlite3.connect(DB_FILE)
     c=db.cursor()
