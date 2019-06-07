@@ -38,6 +38,18 @@
       {{each}}<br>
       {% endfor %}
       <br/>
+      <br>
+
+      <div class = "container">
+	<div class = "row justify-content-center">
+	  <div class = 'col-md-5' style='text-align:center;'>
+	    <form method="GET" action="/friends">
+              <input class="form-control" type="text" value="" placeholder="Friend's username" name="friend" id="friend"></input>
+              <button type="submit" role="button" class="btn btn-light">Add Friend</button>
+	    </form>
+	  </div>
+	</div>
+      </div>
     </div>
   </div><br></center>
   {% set msgs = get_flashed_messages() %}

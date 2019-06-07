@@ -18,7 +18,7 @@ def build():
     c.execute(command)
     command="CREATE TABLE IF NOT EXISTS friends(username TEXT, friend TEXT)"
     c.execute(command)
-    command="CREATE TABLE IF NOT EXISTS online(user TEXT, uuid TEXT)"
+    command="CREATE TABLE IF NOT EXISTS game(user TEXT, game TEXT)"
     c.execute(command)
     db.commit()
     db.close()
@@ -55,12 +55,21 @@ def sfriend(username):
     db.close()
     return output
 
-#Check online
-def son(uuid):
+#search/get friends
+def sf(username,friend):
     db=sqlite3.connect(DB_FILE)
     c=db.cursor()
-    command="SELECT user FROM online WHERE online.uuid=(?)"
-    c.execute(command,(uuid,))
+    command="SELECT friend FROM friends WHERE friends.user=(?),friends.friend=(?)"
+    c.execute(command,(username,friend,))
+    output = c.fetchone()
+    db.close()
+    return output
+
+def sg(friend):
+    db=sqlite3.connect(DB_FILE)
+    c=db.cursor()
+    command="SELECT user FROM game WHERE game.user=(?)"
+    c.execute(command,friend,)
     output = c.fetchone()
     db.close()
     return output
@@ -74,18 +83,18 @@ def auser(username, password):
     db.commit()
     db.close()
 
-def online(username, uuid):
+def agame(user, room):
     db=sqlite3.connect(DB_FILE)
     c=db.cursor()
-    command="INSERT INTO online VALUES(?,?)"
-    c.execute(command,(username, uuid,))
+    command="INSERT INTO game VALUES(?,?)"
+    c.execute(command,(user, room,))
     db.commit()
     db.close()
 
-def offline(username):
+def rgame(user):
     db=sqlite3.connect(DB_FILE)
     c=db.cursor()
-    command="DELETE FROM online WHERE user=(?)"
+    command="DELETE FROM game WHERE user=(?)"
     c.execute(command,(username,))
     db.commit()
     db.close()
