@@ -83,6 +83,10 @@ def auth():
         return redirect(url_for("auth"))
     #global user
     user=request.form['user']
+    try:
+        dbu.suser(user)
+    except:
+        flash("You need to register first")
     password=dbu.spass(user)
     if password[0]==request.form['pass']:
         friends = dbu.sfriend(user)
@@ -92,8 +96,10 @@ def auth():
 
         session['username'] = user
         return redirect(url_for("home"))
-    flash("wrong username or password")
+        flash("wrong username or password")
     return redirect(url_for('login'))
+    
+
 #    return render_template("index.html", currTime = timerTime)
 
 @app.route("/home")
