@@ -44,7 +44,14 @@ def apic(username,picurl):
     c.execute(command,(username,picurl,))
     db.commit()
     db.close()
-
+    
+def rpic(username):
+    db=sqlite3.connect(DB_FILE)
+    c=db.cursor()
+    command="DELETE FROM profile WHERE user=(?)"
+    c.execute(command,(username,))
+    db.commit()
+    db.close()
 #search/get user
 def suser(username):
     db=sqlite3.connect(DB_FILE)

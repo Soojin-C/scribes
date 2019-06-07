@@ -98,7 +98,7 @@ def auth():
         return redirect(url_for("home"))
         flash("wrong username or password")
     return redirect(url_for('login'))
-    
+
 
 #    return render_template("index.html", currTime = timerTime)
 
@@ -112,6 +112,10 @@ def home():
             friends[i]=friends[i][0]
             friends[i]
         picurl = dbu.spic(user)
+        if picurl == None:
+            picurl = "NONE"
+        else:
+            picurl = picurl[len(picurl) - 1]
         return render_template("userprofile.html", currTime = timerTime, username = user, friendlist = friends, loggedin = True, pic=picurl)
     return redirect(url_for("root"))
 
@@ -156,6 +160,7 @@ def savepic():
     print(request.args)
     print(request.form)
     picurl = request.form['pic']
+    dbu.rpic(session['username'])
     dbu.apic(session['username'], picurl)
     flash("Saved new profile picture")
     return redirect(url_for("home"))

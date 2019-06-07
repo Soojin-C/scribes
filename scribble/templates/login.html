@@ -11,7 +11,11 @@
     <div class = "col-8">
       {% set msgs = get_flashed_messages() %}
       {% for each in msgs %}
-      <center><p style="color:red;">{{each}}<p></center>
+      <center>
+        <div class="alert alert-danger" role="alert">
+          {{each}}
+        </div>
+      </center>
       {% endfor %}
       <form method="POST" action="/auth">
         <div class = "form-group row">

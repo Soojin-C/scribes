@@ -3,7 +3,6 @@
 <br>
 <font size="6"><center><i>
     Welcome</i>  &nbsp
-    <img src={{pic}} />
     <text style="font-family:courier;">
     <b>{{username}}</b></text>
 </center></font>
@@ -23,15 +22,48 @@
   <div class="row">
     <div class="col-sm">
       <center><b>
-      Profile Picture</b><br><br>
+      Profile Picture</b><br>
+      {% if pic == "NONE" %}
+      <h3> NO Profile Pic </h3>
+      {% else %}
+      <img src={{pic}} >
+      {% endif %}
+      <br>
+      <br>
 
-      <canvas id='drawingCanvas' height="100" width="100" style='border: 1px solid black'></canvas><br><br>
-      <button id='clearbtn' onclick='clearBoard()'>Clear Board</button>
-    <form action="/save" method="post">
-      <input type="hidden" value="" name="pic" id="pic"></input>
-      <button id='finishbtn' onclick='finishDrawing()' type="submit" >Finish Drawing</button>
-    </form>
-    </div></center>
+      <!-- Button trigger modal -->
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#profilePic">
+        Add New Profie Pic
+      </button>
+
+      <!-- Modal -->
+      <div class="modal fade" id="profilePic" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="Draw Your New Profile">Modal title</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <canvas id='drawingCanvas' height="100" width="100" style='border: 1px solid black'></canvas><br><br>
+              <center>
+                <button id='clearbtn' class="btn btn-outline-primary" onclick='clearBoard()'>Clear Board</button>
+              </center>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <form action="/save" method="post">
+                <input type="hidden" value="" name="pic" id="pic"></input>
+                <input type="submit" id = "finishbtn" onclick='finishDrawing()' class="btn btn-primary" name = "Finish Drawing"></input>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
 
 
 
@@ -58,7 +90,11 @@
   </div><br></center>
   {% set msgs = get_flashed_messages() %}
   {% for each in msgs %}
-    <center><p style="color:red;">{{each}}<p></center>
+  <center>
+    <div class="alert alert-danger" role="alert">
+      {{each}}
+    </div>
+  </center>
   {% endfor %}
   <script type="text/javascript" src="../static/userprofile.js"></script>
   {% endblock %}
