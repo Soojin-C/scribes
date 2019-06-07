@@ -29,7 +29,7 @@ def build():
 def spic(username):
     db=sqlite3.connect(DB_FILE)
     c=db.cursor()
-    command="SELECT username FROM profile WHERE username=?"
+    command="SELECT pic FROM profile WHERE username=?"
     c.execute(command,(username,))
     output = c.fetchone()
     print(output)
