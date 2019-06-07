@@ -83,11 +83,11 @@ def auth():
         return redirect(url_for("auth"))
     #global user
     user=request.form['user']
-    try:
-        dbu.suser(user)
-    except:
+    if dbu.suser(user) == None:
         flash("You need to register first")
+        return redirect(url_for("login"))
     password=dbu.spass(user)
+    print(password)
     if password[0]==request.form['pass']:
         friends = dbu.sfriend(user)
         for i in range(0,len(friends)):
@@ -141,7 +141,8 @@ def game():
     if 'username' in session:
         user=session['username']
         isloggedin = True
-    roomID = request.args['roomID'] if 'roomID' in request.args else 'Default';
+    roomID = request.args['roomID'] if 'roomID' in request.args and request.args['roomID'] != '' else 'Default';
+    print(roomID)
     print(savedgameinfo)
     if roomID not in games and roomID not in savedgameinfo:
         return redirect(url_for('lobby', roomID = request.args['roomID']))
@@ -223,7 +224,7 @@ def friends():
             flash("already on friend's list")
         else:
             dbu.afriend(session['username'],fri)
-            flash(fri+" dded")
+            flash(fri+" added")
     else:
         flash("user does not exist")
     return redirect(url_for("home"))

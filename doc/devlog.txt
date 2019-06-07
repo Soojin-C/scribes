@@ -225,3 +225,6 @@ soojinC -- 2019-06-07 06:03
   - Edits to the component list to match with the current
     features of the app
 ==============================================================
+kevinL, angelaT -- 2019-06-07 14:09 
+--------------------------------------------------------------
+- bug fixes (login, default game room)

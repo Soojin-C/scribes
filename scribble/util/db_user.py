@@ -52,6 +52,7 @@ def rpic(username):
     c.execute(command,(username,))
     db.commit()
     db.close()
+    
 #search/get user
 def suser(username):
     db=sqlite3.connect(DB_FILE)
