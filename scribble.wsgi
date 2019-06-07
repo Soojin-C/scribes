@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 import sys
 sys.path.insert(0,"/var/www/scribble/")
 sys.path.insert(0,"/var/www/scribble/scribble/")
