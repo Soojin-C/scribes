@@ -22,7 +22,7 @@ def newGame(firstPlayer, maxTime = 10, maxRounds = 3, wordPool = defaultWords): 
     output['wordDisplay'] = '' #__p__
     output['points'] = {firstPlayer : 0} #Dictionary request.sid : score
     output['maxTime'] = maxTime
-    output['timerTime'] = maxTime #Current timer
+    output['timerTime'] = 10 #Current timer
     output['maxRounds'] = maxRounds
     output['round'] = 1
     output['currLines'] = []
