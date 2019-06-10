@@ -21,13 +21,24 @@ div id='timer'>
 <a role="button" class="btn btn-light" href="/reg">Register</a>
 -->
 <div class = "container">
+<br/>
+  <h1 style="text-align: center; font-size:50px;"><span style="color: #3366ff;"><strong>Scribble</strong></span></h1>
   <div class = "row justify-content-center">
-    <div class = 'col-md-2' style='text-align:center;'>
+    <div id="play" style='text-align:center;'>
+    <center>
       <form method="GET" action="/game">
-        <input class="form-control" type="text" value="" placeholder="Room ID" name='roomID' id="roomInput"></input>
-        <button type='submit' role="button" class="btn btn-light">Play</button>
+        <input class="form-control" type="text" value="" placeholder="Room ID (join a specific game)" name='roomID' id="roomInput"></input>
+        <br/>
+        <button type='submit' role="button" class="btn btn-success">Play</button>
       </form>
+      <hr>
+      <p><strong>How to Play</strong></p>
+      Scribble is a multiplayer drawing game where players take turns drawing and guessing the chosen word. <br>
+      If it is your turn to draw, choose one of the three words and draw in on the canvas. <br>
+      If you are not drawing, type your guess in chat. <br>
+      As you earn points, it will be displayed on the scoreboard.
     </div>
+    <center>
   </div>
 </div>
 

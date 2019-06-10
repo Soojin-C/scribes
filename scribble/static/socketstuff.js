@@ -147,7 +147,7 @@ var clrSelect = d3.select("#clrwheel")
                   .attr("height", 500)
 
 
-var colorList = ["red", "orange", "yellow", "green", "blue", "purple", "pink", "black"]
+var colorList = ["red", "orange", "yellow", "green", "blue", "purple", "brown", "black"]
 var count = 0
 for (var j = 0; j < colorList.length; j++){
   if (j % 4 == 0){

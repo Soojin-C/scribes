@@ -16,7 +16,7 @@ var createGame = function() {
   var numRounds = document.getElementById('numRounds');
   var maxTime = document.getElementById('maxTime');
   maxTime = maxTime.options[maxTime.selectedIndex].value;
-  numRounds = numRounds.options[numRounds.selectedIndex].value;
+  numRounds = 100;
   output['maxTime'] = maxTime;
   output['numRounds'] = numRounds;
   socket.emit('createGame', output);
