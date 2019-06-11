@@ -3,6 +3,8 @@ Soojin Choi(PM), Emily Lee, Kevin Lin, Angela Tom
 ## Project Overview
 Scribbl+ is a multiplayer drawing game. For each round, users would be able to guess the word being drawn or draw one of the three words given to them.
 
+[Our video demo](https://youtube.com/watch?v=sUy7rwauz9s)
+
 ## Necessary Packages
 flask_socketio
 * Allows our app to run using the features of web sockets
