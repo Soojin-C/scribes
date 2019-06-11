@@ -1,13 +1,14 @@
 cffi==1.12.3
 Click==7.0
+dnspython==1.16.0
+eventlet==0.25.0
 Flask==1.0.3
 Flask-SocketIO==4.0.0
-gevent==1.4.0
-gevent-websocket==0.10.1
 greenlet==0.4.15
 itsdangerous==1.1.0
 Jinja2==2.10.1
 MarkupSafe==1.1.1
+monotonic==1.5
 pycparser==2.19
 python-engineio==3.8.0
 python-socketio==4.1.0

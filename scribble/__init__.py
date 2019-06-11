@@ -69,9 +69,9 @@ def regis():
         if len(pass1)>0 and len(user)>0:
             if pass1==pass2:
                 dbu.auser(user,pass1)
-                flash("user made")
+                flash("Created user")
                 return render_template("index.html")
-    flash("passwords do not match")
+    flash("Passwords do not match")
     return redirect(url_for('reg'))
 
 #user=""
@@ -96,7 +96,7 @@ def auth():
 
         session['username'] = user
         return redirect(url_for("home"))
-        flash("wrong username or password")
+        flash("Wrong username or password")
     return redirect(url_for('login'))
 
 
@@ -215,18 +215,18 @@ def friends():
         return redirect(url_for("root"))
     fri=request.args['friend']
     if fri==session['username']:
-        flash("can't add yourself")
+        flash("You can't add yourself")
     elif dbu.suser(fri):
         frie=dbu.sfriend(session['username'])
         for i in range(0,len(frie)):
             frie[i]=frie[i][0]
         if fri in frie:
-            flash("already on friend's list")
+            flash("Already on friend's list")
         else:
             dbu.afriend(session['username'],fri)
             flash(fri+" added")
     else:
-        flash("user does not exist")
+        flash("User does not exist")
     return redirect(url_for("home"))
 
 @socketio.on("joinRoom")
@@ -410,6 +410,7 @@ def message(msg, methods=['GET','POST']):
                     currGame['timerTime'] = currGame['timerTime'] // 2 + 1
                 currGame['guessedCorrectly'].add(request.sid)
                 if len(currGame['guessedCorrectly']) >= len(currGame['players']) - 1: #Skip turn if everyone has guessed correctly
+                    send("Everyone guessed the word correctly", broadcast=True)
                     nextTurn(currGame, rooms[request.sid])
         else:
             send("<b>You can't chat while drawing.</b>")
