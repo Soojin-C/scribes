@@ -11,7 +11,7 @@ from util import Game
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(32)
-socketio = SocketIO(app, ping_interval = 1, ping_timeout = 5, allow_upgrades = False)
+socketio = SocketIO(app, ping_interval = 1, ping_timeout = 10, allow_upgrades = False)
 
 continueTimer = True
 timerTime = 60 #Timer to be displayed

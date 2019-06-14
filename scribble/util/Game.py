@@ -9,7 +9,7 @@ defaultWords = set(x.lower() for x in open(path,'r').read().split())
 DRAWING = 0
 CHOOSING = 1
 
-def newGame(firstPlayer, maxTime = 10, maxRounds = 3, wordPool = defaultWords): #Creates a new game
+def newGame(firstPlayer, maxTime = 80, maxRounds = 3, wordPool = defaultWords): #Creates a new game
     output = {}
     output['players'] = set() #request.sid
     output['players'].add(firstPlayer)
